@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "exercie1": {
+    "exercice1": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -62,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "exercie1:build:production"
+              "buildTarget": "exercice1:build:production"
             },
             "development": {
-              "buildTarget": "exercie1:build:development"
+              "buildTarget": "exercice1:build:development"
             }
           },
           "defaultConfiguration": "development"
