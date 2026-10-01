@@ -33,7 +33,7 @@
             "styles": [
               "src/styles.scss"
             ]
-          },
+          }, 
           "configurations": {
             "production": {
               "budgets": [
