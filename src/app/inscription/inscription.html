@@ -1,0 +1,76 @@
+<h1>Inscription</h1>
+
+<form #inscriptionForm="ngForm" (ngSubmit)="onSubmit(inscriptionForm)" novalidate>
+  <div class="champ">
+    <label for="login">Login</label>
+    <input id="login" name="login" type="text" [(ngModel)]="utilisateur.login" #login="ngModel" required />
+    @if (login.invalid && login.touched) {
+      <span class="erreur">Le login est requis.</span>
+    }
+  </div>
+
+  <div class="champ">
+    <label for="motDePasse">Mot de passe</label>
+    <input id="motDePasse" name="motDePasse" type="password" [(ngModel)]="utilisateur.motDePasse" #motDePasse="ngModel" required />
+    @if (motDePasse.invalid && motDePasse.touched) {
+      <span class="erreur">Le mot de passe est requis.</span>
+    }
+  </div>
+
+  <div class="champ">
+    <label for="confirmation">Confirmation du mot de passe</label>
+    <input id="confirmation" name="confirmation" type="password" [(ngModel)]="utilisateur.confirmation" #confirmation="ngModel" required />
+    @if (confirmation.touched) {
+      @if (confirmation.invalid) {
+        <span class="erreur">La confirmation est requise.</span>
+      } @else if (!motsDePasseIdentiques()) {
+        <span class="erreur">Les mots de passe ne correspondent pas.</span>
+      }
+    }
+  </div>
+
+  <div class="champ">
+    <label for="nom">Nom</label>
+    <input id="nom" name="nom" type="text" [(ngModel)]="utilisateur.nom" #nom="ngModel" required />
+    @if (nom.invalid && nom.touched) {
+      <span class="erreur">Le nom est requis.</span>
+    }
+  </div>
+
+  <div class="champ">
+    <label for="prenom">Prénom</label>
+    <input id="prenom" name="prenom" type="text" [(ngModel)]="utilisateur.prenom" #prenom="ngModel" required />
+    @if (prenom.invalid && prenom.touched) {
+      <span class="erreur">Le prénom est requis.</span>
+    }
+  </div>
+
+  <div class="champ">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" [(ngModel)]="utilisateur.email" #email="ngModel" required email />
+    @if (email.touched) {
+      @if (email.errors?.['required']) {
+        <span class="erreur">L'email est requis.</span>
+      } @else if (email.errors?.['email']) {
+        <span class="erreur">Le format de l'email est invalide.</span>
+      }
+    }
+  </div>
+
+  <div class="actions">
+    <button type="submit" [disabled]="inscriptionForm.invalid || !motsDePasseIdentiques()">S'inscrire</button>
+    <button type="button" (click)="reinitialiser(inscriptionForm)">Réinitialiser</button>
+  </div>
+</form>
+
+@if (utilisateurEnregistre) {
+  <div class="resultat">
+    <h2>Inscription réussie</h2>
+    <ul>
+      <li><strong>Login :</strong> {{ utilisateurEnregistre.login }}</li>
+      <li><strong>Nom :</strong> {{ utilisateurEnregistre.nom }}</li>
+      <li><strong>Prénom :</strong> {{ utilisateurEnregistre.prenom }}</li>
+      <li><strong>Email :</strong> {{ utilisateurEnregistre.email }}</li>
+    </ul>
+  </div>
+}

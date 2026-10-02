@@ -1,0 +1,20 @@
+/* Palette de couleurs de l'application */
+:root {
+  --black: #000505;
+  --space-indigo: #3b3355;
+  --dusty-grape: #5d5d81;
+  --pale-sky: #bfcde0;
+  --white: #fefcfd;
+
+  // Couleurs sémantiques (validation des formulaires)
+  --erreur: #c62828;
+  --succes: #2e7d32;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+  color: var(--black);
+  background: linear-gradient(180deg, var(--pale-sky), var(--white));
+}
