@@ -1,0 +1,99 @@
+@if (!submited) {
+  <h1>Déclarer une pollution</h1>
+
+  @let champs = formulaire.controls;
+
+  <form [formGroup]="formulaire" (ngSubmit)="declarer()">
+    <div class="champ">
+      <label for="titre">Titre de la pollution</label>
+      <input id="titre" type="text" formControlName="titre" />
+      @if (champs.titre.invalid && champs.titre.touched) {
+        <span class="erreur">Le titre est requis.</span>
+      }
+    </div>
+
+    <div class="champ">
+      <label for="type">Type de pollution</label>
+      <select id="type" formControlName="type">
+        <option value="" disabled>-- Choisir un type --</option>
+        @for (type of typesPollution; track type) {
+          <option [value]="type">{{ type }}</option>
+        }
+      </select>
+      @if (champs.type.invalid && champs.type.touched) {
+        <span class="erreur">Choisissez un type de pollution.</span>
+      }
+    </div>
+
+    <div class="champ">
+      <label for="description">Description</label>
+      <textarea id="description" rows="4" formControlName="description"></textarea>
+      @if (champs.description.invalid && champs.description.touched) {
+        <span class="erreur">La description est requise.</span>
+      }
+    </div>
+
+    <div class="champ">
+      <label for="dateObservation">Date de l'observation</label>
+      <input id="dateObservation" type="date" formControlName="dateObservation" />
+      @if (champs.dateObservation.touched) {
+        @if (champs.dateObservation.hasError('required')) {
+          <span class="erreur">La date de l'observation est requise (jj/mm/aaaa).</span>
+        } @else if (champs.dateObservation.hasError('dateInvalide')) {
+          <span class="erreur">Cette date n'est pas valide.</span>
+        } @else if (champs.dateObservation.hasError('dateFuture')) {
+          <span class="erreur">La date de l'observation ne peut pas être dans le futur.</span>
+        }
+      }
+    </div>
+
+    <div class="champ">
+      <label for="lieu">Lieu</label>
+      <input id="lieu" type="text" formControlName="lieu" />
+      @if (champs.lieu.invalid && champs.lieu.touched) {
+        <span class="erreur">Le lieu est requis.</span>
+      }
+    </div>
+
+    <div class="coordonnees">
+      <div class="champ">
+        <label for="latitude">Latitude</label>
+        <input id="latitude" type="number" step="any" formControlName="latitude" placeholder="48.8566" />
+        @if (champs.latitude.touched) {
+          @if (champs.latitude.hasError('required')) {
+            <span class="erreur">Saisissez une latitude valide (nombre).</span>
+          } @else if (champs.latitude.hasError('min') || champs.latitude.hasError('max')) {
+            <span class="erreur">La latitude doit être comprise entre -90 et 90.</span>
+          }
+        }
+      </div>
+
+      <div class="champ">
+        <label for="longitude">Longitude</label>
+        <input id="longitude" type="number" step="any" formControlName="longitude" placeholder="2.3522" />
+        @if (champs.longitude.touched) {
+          @if (champs.longitude.hasError('required')) {
+            <span class="erreur">Saisissez une longitude valide (nombre).</span>
+          } @else if (champs.longitude.hasError('min') || champs.longitude.hasError('max')) {
+            <span class="erreur">La longitude doit être comprise entre -180 et 180.</span>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="champ">
+      <label for="photoUrl">Photo (URL) <span class="optionnel">— optionnel</span></label>
+      <input id="photoUrl" type="url" formControlName="photoUrl" placeholder="https://…" />
+      @if (champs.photoUrl.invalid && champs.photoUrl.touched) {
+        <span class="erreur">L'URL doit commencer par http:// ou https://.</span>
+      }
+    </div>
+
+    <div class="actions">
+      <button type="submit">Déclarer</button>
+    </div>
+  </form>
+}
+@else {
+  <app-recap-declaration [declarationPollution]="declarationPollution" (backToForm)="backToForm()"></app-recap-declaration>
+}

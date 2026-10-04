@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.statut {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--succes);
+  border-radius: 999px;
+  color: var(--succes);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+h1 {
+  margin: 0 0 1.25rem;
+  color: var(--space-indigo);
+  overflow-wrap: anywhere;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  margin-bottom: 1.25rem;
+  border-radius: 6px;
+  background: var(--pale-sky);
+}
+
+.photo-indisponible {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--erreur);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--pale-sky) 30%, var(--white));
+  color: var(--dusty-grape);
+  overflow-wrap: anywhere;
+
+  a {
+    color: var(--space-indigo);
+  }
+}
+
+// Grille de tuiles : 2 colonnes sur grand écran, 1 seule sur mobile
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+
+  > div {
+    min-width: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--pale-sky) 30%, var(--white));
+  }
+
+  .pleine-largeur {
+    grid-column: 1 / -1;
+  }
+
+  dt {
+    margin-bottom: 0.25rem;
+    color: var(--dusty-grape);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--black);
+    overflow-wrap: anywhere;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  background: var(--space-indigo);
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+// Conserve les retours à la ligne saisis dans le textarea
+.description {
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  .lien-carte {
+    color: var(--space-indigo);
+    font-weight: 600;
+  }
+
+  button {
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    background: var(--dusty-grape);
+    color: var(--white);
+
+    &:hover {
+      background: var(--space-indigo);
+    }
+  }
+}
