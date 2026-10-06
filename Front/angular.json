@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "exercice1": {
+    "tp02": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -62,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "exercice1:build:production"
+              "buildTarget": "tp02:build:production"
             },
             "development": {
-              "buildTarget": "exercice1:build:development"
+              "buildTarget": "tp02:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -43,14 +43,14 @@ function dateObservationValide(control: AbstractControl<string | null>): Validat
 })
 export class DeclarationPollution {
 
-  submited:boolean=false;
+  submitted:boolean=false;
   declarationPollution:Pollution={
     titre: '',
     type: '',
     description: '',
     dateObservation: '',
     lieu: '',
-    latitude: 111111,
+    latitude: 0,
     longitude: 0
   }
 
@@ -73,7 +73,7 @@ export class DeclarationPollution {
       return;
     }
     this.declarationPollution=this.normalize(this.formulaire);
-    this.submited=true;
+    this.submitted=true;
   }
 
   normalize(formulaire:FormGroup): Pollution{
@@ -93,6 +93,6 @@ export class DeclarationPollution {
   }
 
   backToForm(){
-    this.submited=false;
+    this.submitted=false;
   }
 }
