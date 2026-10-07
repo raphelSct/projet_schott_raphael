@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Pollution } from '../declaration-pollution';
+import { Pollution } from '../../models/pollution';
 
 @Component({
   imports: [DatePipe, DecimalPipe],
