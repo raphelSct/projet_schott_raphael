@@ -1,0 +1,39 @@
+.entete {
+  background: var(--space-indigo);
+  box-shadow: 0 2px 8px rgba(0, 5, 5, 0.25);
+}
+
+// Liens à gauche, profil à droite
+.contenu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 960px;
+  min-height: 3.5rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.navigation {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 2rem;
+
+  a {
+    padding: 1rem 0 0.75rem;
+    border-bottom: 3px solid transparent;
+    color: var(--pale-sky);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--white);
+    }
+
+    &.actif {
+      border-bottom-color: var(--pale-sky);
+      color: var(--white);
+    }
+  }
+}
