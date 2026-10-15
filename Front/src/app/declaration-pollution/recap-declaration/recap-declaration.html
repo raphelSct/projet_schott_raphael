@@ -1,0 +1,57 @@
+@let pollution = declarationPollution;
+
+<p class="statut">✓ Déclaration enregistrée</p>
+<h1>{{ pollution.titre }}</h1>
+
+@if (pollution.photoUrl) {
+  @if (!photoIndisponible) {
+    <img
+      class="photo"
+      [src]="pollution.photoUrl"
+      [alt]="'Photo de la pollution : ' + pollution.titre"
+      (error)="photoIndisponible = true"
+    />
+  } @else {
+    <p class="photo-indisponible">
+      Impossible d'afficher la photo depuis
+      <a [href]="pollution.photoUrl" target="_blank" rel="noopener">{{ pollution.photoUrl }}</a>
+    </p>
+  }
+}
+
+<dl class="details">
+  <div>
+    <dt>Type de pollution</dt>
+    <dd><span class="badge">{{ pollution.type }}</span></dd>
+  </div>
+
+  <div>
+    <dt>Date de l'observation</dt>
+    <dd>{{ pollution.dateObservation | date: 'fullDate' }}</dd>
+  </div>
+
+  <div class="pleine-largeur">
+    <dt>Lieu</dt>
+    <dd>{{ pollution.lieu }}</dd>
+  </div>
+
+  <div>
+    <dt>Latitude</dt>
+    <dd>{{ pollution.latitude | number: '1.0-6' }}°</dd>
+  </div>
+
+  <div>
+    <dt>Longitude</dt>
+    <dd>{{ pollution.longitude | number: '1.0-6' }}°</dd>
+  </div>
+
+  <div class="pleine-largeur">
+    <dt>Description</dt>
+    <dd class="description">{{ pollution.description }}</dd>
+  </div>
+</dl>
+
+<div class="actions">
+  <a class="lien-carte" [href]="lienCarte" target="_blank" rel="noopener">Voir sur la carte ↗</a>
+  <button type="button" (click)="goBackToForm()">Modifier la déclaration</button>
+</div>

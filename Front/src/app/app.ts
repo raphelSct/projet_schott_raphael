@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Inscription } from './inscription/inscription';
+import { DeclarationPollution } from './declaration-pollution/declaration-pollution';
 
 @Component({
-  imports: [Inscription],
+  imports: [DeclarationPollution],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',

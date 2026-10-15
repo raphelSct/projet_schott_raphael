@@ -1,0 +1,5 @@
+@if (submitted && declarationPollution) {
+  <app-recap-declaration [declarationPollution]="declarationPollution" (backToForm)="backToForm()" />
+} @else {
+  <app-formulaire-pollution [valeurInitiale]="declarationPollution" (pollutionDeclaree)="afficherRecap($event)" />
+}
