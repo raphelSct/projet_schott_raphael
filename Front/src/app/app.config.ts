@@ -2,19 +2,21 @@ import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
-import { apiSimuleeInterceptor } from './interceptors/api-simulee.interceptor';
+import { mockPollutionsInterceptor } from './interceptors/mock-pollutions.interceptor';
+import { mockUsersInterceptor } from './interceptors/mock-users.interceptor';
 
-// Dates et nombres formatés à la française par les pipes (date, number)
+// Dates and numbers formatted the French way by the pipes (date, number)
 registerLocaleData(localeFr);
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
-    provideHttpClient(withInterceptors(environment.apiSimulee ? [apiSimuleeInterceptor] : [])),
+    // withComponentInputBinding: URL parameters (e.g. :id) are passed to the component @Inputs
+    provideRouter(routes, withComponentInputBinding()),
+    provideHttpClient(withInterceptors(environment.mockApi ? [mockUsersInterceptor, mockPollutionsInterceptor] : [])),
     { provide: LOCALE_ID, useValue: 'fr' }
   ]
 };

@@ -1,0 +1,90 @@
+<div class="page-header">
+  <h1>Pollutions déclarées</h1>
+  <a class="add-button" routerLink="/pollutions/new">+ Déclarer une pollution</a>
+</div>
+
+<form class="filters" [formGroup]="filters" role="search" aria-label="Filtrer les pollutions">
+  <div class="field">
+    <label for="search">Recherche</label>
+    <input id="search" type="search" formControlName="search" placeholder="Titre, lieu, description…" />
+  </div>
+
+  <div class="field">
+    <label for="filter-type">Type</label>
+    <select id="filter-type" formControlName="type">
+      <option value="">Tous les types</option>
+      @for (type of pollutionTypes; track type) {
+        <option [value]="type">{{ type | pollutionTypeLabel }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="from">Observée du</label>
+    <input id="from" type="date" formControlName="from" />
+  </div>
+
+  <div class="field">
+    <label for="to">au</label>
+    <input id="to" type="date" formControlName="to" />
+  </div>
+
+  <div class="field reset">
+    <button type="button" (click)="filters.reset()">Réinitialiser</button>
+  </div>
+</form>
+
+@if (loading()) {
+  <p class="state-message">Chargement des pollutions…</p>
+} @else if (error(); as message) {
+  <p class="api-error" role="alert">{{ message }}</p>
+} @else {
+  @let shown = filteredPollutions().length;
+  @let total = pollutions().length;
+
+  <p class="count" aria-live="polite">
+    {{ shown }} {{ shown > 1 ? 'pollutions' : 'pollution' }}
+    @if (shown !== total) {
+      <span class="count-total">sur {{ total }}</span>
+    }
+  </p>
+
+  @if (deleteError(); as message) {
+    <p class="api-error" role="alert">{{ message }}</p>
+  }
+
+  <ul class="grid">
+    @for (pollution of filteredPollutions(); track pollution.id) {
+      <li class="pollution">
+        @if (pollution.photoUrl) {
+          <img class="thumbnail" [src]="pollution.photoUrl" alt="" />
+        } @else {
+          <div class="thumbnail no-photo">Pas de photo</div>
+        }
+
+        <div class="content">
+          <span class="badge">{{ pollution.type | pollutionTypeLabel }}</span>
+          <h2>
+            <a [routerLink]="['/pollutions', pollution.id]">{{ pollution.title }}</a>
+          </h2>
+          <p class="meta">{{ pollution.observationDate | date: 'longDate' }} · {{ pollution.location }}</p>
+        </div>
+
+        <div class="card-actions">
+          <a [routerLink]="['/pollutions', pollution.id]">Voir le détail</a>
+          <button
+            type="button"
+            [attr.aria-label]="'Supprimer « ' + pollution.title + ' »'"
+            (click)="remove(pollution)"
+          >
+            Supprimer
+          </button>
+        </div>
+      </li>
+    } @empty {
+      <li class="state-message">
+        {{ total ? 'Aucune pollution ne correspond à ces filtres.' : 'Aucune pollution déclarée pour le moment.' }}
+      </li>
+    }
+  </ul>
+}

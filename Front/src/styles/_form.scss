@@ -1,0 +1,45 @@
+// Styles shared by forms, to include in a component .scss file:
+// @use '<path>/styles/form';
+@use 'mixins';
+
+h1 {
+  margin-top: 0;
+  color: var(--space-indigo);
+}
+
+.field {
+  @include mixins.field;
+}
+
+.optional,
+.hint {
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.hint {
+  margin-top: 0.25rem;
+  color: var(--dusty-grape);
+}
+
+// Fields side by side, stacked on small screens
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  column-gap: 1rem;
+}
+
+.error {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    @include mixins.button-primary;
+  }
+}

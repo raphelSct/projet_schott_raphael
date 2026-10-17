@@ -1,0 +1,18 @@
+<a class="back-link" routerLink="/pollutions">← Toutes les pollutions</a>
+
+@if (pollution(); as detail) {
+  <app-pollution-info [pollution]="detail" />
+
+  <div class="actions">
+    <button type="button" class="delete" (click)="remove(detail)">Supprimer</button>
+    <a class="edit" [routerLink]="['/pollutions', detail.id, 'edit']">Modifier</a>
+  </div>
+
+  @if (deleteError(); as message) {
+    <p class="api-error" role="alert">{{ message }}</p>
+  }
+} @else if (error(); as message) {
+  <p class="api-error" role="alert">{{ message }}</p>
+} @else {
+  <p class="state-message">Chargement de la pollution…</p>
+}

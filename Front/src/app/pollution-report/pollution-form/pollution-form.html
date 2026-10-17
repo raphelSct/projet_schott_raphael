@@ -1,0 +1,94 @@
+<h1>{{ heading }}</h1>
+
+@let controls = form.controls;
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="field">
+    <label for="title">Titre de la pollution</label>
+    <input id="title" type="text" formControlName="title" />
+    @if (controls.title.invalid && controls.title.touched) {
+      <span class="error">Le titre est requis.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="type">Type de pollution</label>
+    <select id="type" formControlName="type">
+      <option value="" disabled>-- Choisir un type --</option>
+      @for (type of pollutionTypes; track type) {
+        <option [value]="type">{{ type | pollutionTypeLabel }}</option>
+      }
+    </select>
+    @if (controls.type.invalid && controls.type.touched) {
+      <span class="error">Choisissez un type de pollution.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="description">Description</label>
+    <textarea id="description" rows="4" formControlName="description"></textarea>
+    @if (controls.description.invalid && controls.description.touched) {
+      <span class="error">La description est requise.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="observationDate">Date de l'observation</label>
+    <input id="observationDate" type="date" formControlName="observationDate" />
+    @if (controls.observationDate.touched) {
+      @if (controls.observationDate.hasError('required')) {
+        <span class="error">La date de l'observation est requise (jj/mm/aaaa).</span>
+      } @else if (controls.observationDate.hasError('invalidDate')) {
+        <span class="error">Cette date n'est pas valide.</span>
+      } @else if (controls.observationDate.hasError('futureDate')) {
+        <span class="error">La date de l'observation ne peut pas être dans le futur.</span>
+      }
+    }
+  </div>
+
+  <div class="field">
+    <label for="location">Lieu</label>
+    <input id="location" type="text" formControlName="location" />
+    @if (controls.location.invalid && controls.location.touched) {
+      <span class="error">Le lieu est requis.</span>
+    }
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="latitude">Latitude</label>
+      <input id="latitude" type="number" step="any" formControlName="latitude" placeholder="48.8566" />
+      @if (controls.latitude.touched) {
+        @if (controls.latitude.hasError('required')) {
+          <span class="error">Saisissez une latitude valide (nombre).</span>
+        } @else if (controls.latitude.hasError('min') || controls.latitude.hasError('max')) {
+          <span class="error">La latitude doit être comprise entre -90 et 90.</span>
+        }
+      }
+    </div>
+
+    <div class="field">
+      <label for="longitude">Longitude</label>
+      <input id="longitude" type="number" step="any" formControlName="longitude" placeholder="2.3522" />
+      @if (controls.longitude.touched) {
+        @if (controls.longitude.hasError('required')) {
+          <span class="error">Saisissez une longitude valide (nombre).</span>
+        } @else if (controls.longitude.hasError('min') || controls.longitude.hasError('max')) {
+          <span class="error">La longitude doit être comprise entre -180 et 180.</span>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="photoUrl">Photo (URL) <span class="optional">— optionnel</span></label>
+    <input id="photoUrl" type="url" formControlName="photoUrl" placeholder="https://…" />
+    @if (controls.photoUrl.invalid && controls.photoUrl.touched) {
+      <span class="error">L'URL doit commencer par http:// ou https://.</span>
+    }
+  </div>
+
+  <div class="actions">
+    <button type="submit">{{ submitLabel }}</button>
+  </div>
+</form>

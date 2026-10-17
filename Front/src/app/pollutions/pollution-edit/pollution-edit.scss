@@ -1,0 +1,17 @@
+@use '../../../styles/mixins';
+
+:host {
+  @include mixins.card;
+}
+
+.back-link {
+  @include mixins.back-link;
+}
+
+.state-message {
+  color: var(--dusty-grape);
+}
+
+.api-error {
+  @include mixins.error-message;
+}

@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ProfilUtilisateur } from './profil-utilisateur/profil-utilisateur';
-import { UtilisateurService } from './services/utilisateur.service';
+import { UserService } from './services/user.service';
+import { UserProfile } from './user-profile/user-profile';
 
 @Component({
-  imports: [ProfilUtilisateur, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, UserProfile],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',
 })
 export class App {
-  readonly utilisateur = inject(UtilisateurService).utilisateur;
+  readonly user = inject(UserService).user;
 }

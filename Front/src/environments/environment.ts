@@ -1,7 +1,7 @@
-// Configuration de production (ng build)
+// Production configuration (ng build)
 export const environment = {
-  // À remplacer par l'URL de l'API déployée quand elle existera
+  // To be replaced with the URL of the deployed API once it exists
   apiUrl: '/api',
-  // Réponses de l'API simulées par api-simulee.interceptor.ts : à passer à false une fois l'API déployée
-  apiSimulee: true,
+  // API responses simulated by the interceptors in src/app/interceptors/: set to false once the API is deployed
+  mockApi: true,
 };

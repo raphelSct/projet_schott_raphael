@@ -1,0 +1,23 @@
+<button
+  type="button"
+  class="avatar"
+  [attr.aria-expanded]="open"
+  aria-controls="user-profile-panel"
+  [attr.aria-label]="'Profil de ' + user.firstName + ' ' + user.lastName"
+  (click)="toggle()"
+>
+  {{ initials }}
+</button>
+
+@if (open) {
+  <div id="user-profile-panel" class="panel">
+    <p class="name">{{ user.firstName }} {{ user.lastName }}</p>
+    <dl>
+      <dt>Login</dt>
+      <dd>{{ user.username }}</dd>
+
+      <dt>Email</dt>
+      <dd>{{ user.email }}</dd>
+    </dl>
+  </div>
+}
