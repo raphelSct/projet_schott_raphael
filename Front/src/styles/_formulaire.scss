@@ -1,0 +1,88 @@
+// Styles communs aux formulaires, à inclure dans le .scss d'un composant :
+// @use '<chemin>/styles/formulaire';
+@use 'mixins';
+
+h1 {
+  margin-top: 0;
+  color: var(--space-indigo);
+}
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-bottom: 1rem;
+
+  label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--dusty-grape);
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 0.5rem;
+    border: 1px solid var(--pale-sky);
+    border-radius: 4px;
+    background: var(--white);
+    color: var(--black);
+    font: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: var(--dusty-grape);
+      box-shadow: 0 0 0 3px var(--pale-sky);
+    }
+
+    &.ng-invalid.ng-touched {
+      border-color: var(--erreur);
+    }
+
+    &.ng-valid.ng-touched {
+      border-color: var(--succes);
+    }
+
+    // Erreur portée par le groupe (ex. confirmation du mot de passe) : Angular ne la reflète pas sur le champ
+    &.invalide.ng-touched {
+      border-color: var(--erreur);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.optionnel,
+.aide {
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.aide {
+  margin-top: 0.25rem;
+  color: var(--dusty-grape);
+}
+
+// Champs côte à côte, empilés sur petit écran
+.ligne {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  column-gap: 1rem;
+}
+
+.erreur {
+  color: var(--erreur);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    @include mixins.bouton-principal;
+  }
+}

@@ -1,1 +1,18 @@
-<app-declaration-pollution />
+<header class="entete">
+  <div class="contenu">
+    @if (utilisateur(); as inscrit) {
+      <nav class="navigation">
+        <a routerLink="/declaration" routerLinkActive="actif" ariaCurrentWhenActive="page">Déclarer une pollution</a>
+      </nav>
+      <app-profil-utilisateur [utilisateur]="inscrit" />
+    } @else {
+      <nav class="navigation">
+        <a routerLink="/inscription" routerLinkActive="actif" ariaCurrentWhenActive="page">Inscription</a>
+      </nav>
+    }
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>

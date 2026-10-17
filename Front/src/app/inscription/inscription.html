@@ -1,0 +1,5 @@
+<app-formulaire-inscription [envoiEnCours]="envoiEnCours()" (inscription)="inscrire($event)" />
+
+@if (erreur(); as message) {
+  <p class="erreur-api" role="alert">{{ message }}</p>
+}

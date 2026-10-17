@@ -1,0 +1,85 @@
+<h1>Inscription</h1>
+
+@let champs = formulaire.controls;
+
+<form [formGroup]="formulaire" (ngSubmit)="envoyer()">
+  <div class="ligne">
+    <div class="champ">
+      <label for="prenom">Prénom</label>
+      <input id="prenom" type="text" formControlName="prenom" autocomplete="given-name" />
+      @if (champs.prenom.invalid && champs.prenom.touched) {
+        <span class="erreur">Le prénom est requis.</span>
+      }
+    </div>
+
+    <div class="champ">
+      <label for="nom">Nom</label>
+      <input id="nom" type="text" formControlName="nom" autocomplete="family-name" />
+      @if (champs.nom.invalid && champs.nom.touched) {
+        <span class="erreur">Le nom est requis.</span>
+      }
+    </div>
+  </div>
+
+  <div class="champ">
+    <label for="email">Email</label>
+    <input id="email" type="email" formControlName="email" autocomplete="email" />
+    @if (champs.email.touched) {
+      @if (champs.email.hasError('required')) {
+        <span class="erreur">L'email est requis.</span>
+      } @else if (champs.email.hasError('email')) {
+        <span class="erreur">Le format de l'email est invalide.</span>
+      }
+    }
+  </div>
+
+  <div class="champ">
+    <label for="login">Login</label>
+    <input id="login" type="text" formControlName="login" autocomplete="username" />
+    @if (champs.login.touched) {
+      @if (champs.login.hasError('required')) {
+        <span class="erreur">Le login est requis.</span>
+      } @else if (champs.login.hasError('pattern')) {
+        <span class="erreur">Le login ne doit pas contenir d'espace.</span>
+      }
+    }
+  </div>
+
+  <div class="champ">
+    <label for="motDePasse">Mot de passe</label>
+    <input id="motDePasse" type="password" formControlName="motDePasse" autocomplete="new-password" />
+    @if (champs.motDePasse.touched && champs.motDePasse.invalid) {
+      @if (champs.motDePasse.hasError('required')) {
+        <span class="erreur">Le mot de passe est requis.</span>
+      } @else {
+        <span class="erreur">Le mot de passe doit contenir au moins 8 caractères.</span>
+      }
+    } @else {
+      <span class="aide">8 caractères minimum.</span>
+    }
+  </div>
+
+  <div class="champ">
+    <label for="confirmation">Confirmation du mot de passe</label>
+    <input
+      id="confirmation"
+      type="password"
+      formControlName="confirmation"
+      autocomplete="new-password"
+      [class.invalide]="formulaire.hasError('motsDePasseDifferents')"
+    />
+    @if (champs.confirmation.touched) {
+      @if (champs.confirmation.hasError('required')) {
+        <span class="erreur">La confirmation est requise.</span>
+      } @else if (formulaire.hasError('motsDePasseDifferents')) {
+        <span class="erreur">Les mots de passe ne correspondent pas.</span>
+      }
+    }
+  </div>
+
+  <div class="actions">
+    <button type="submit" [disabled]="envoiEnCours">
+      {{ envoiEnCours ? 'Inscription en cours…' : "S'inscrire" }}
+    </button>
+  </div>
+</form>
