@@ -1,0 +1,32 @@
+@use '../../../styles/mixins';
+
+:host {
+  @include mixins.card;
+}
+
+.back-link {
+  @include mixins.back-link;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+
+  .delete {
+    @include mixins.button-danger;
+  }
+
+  .edit {
+    @include mixins.button-primary;
+  }
+}
+
+.state-message {
+  color: var(--dusty-grape);
+}
+
+.api-error {
+  @include mixins.error-message;
+}

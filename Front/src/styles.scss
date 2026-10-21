@@ -1,4 +1,4 @@
-/* Palette de couleurs de l'application */
+/* Application color palette */
 :root {
   --black: #000505;
   --space-indigo: #3b3355;
@@ -6,9 +6,9 @@
   --pale-sky: #bfcde0;
   --white: #fefcfd;
 
-  // Couleurs sémantiques (validation des formulaires)
-  --erreur: #c62828;
-  --succes: #2e7d32;
+  // Semantic colors (form validation)
+  --error: #c62828;
+  --success: #2e7d32;
 }
 
 body {

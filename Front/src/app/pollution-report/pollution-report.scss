@@ -1,0 +1,10 @@
+@use '../../styles/mixins';
+
+// Card shared by the form and the summary
+:host {
+  @include mixins.card;
+}
+
+.api-error {
+  @include mixins.error-message;
+}

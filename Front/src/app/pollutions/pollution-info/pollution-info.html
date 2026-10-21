@@ -1,0 +1,52 @@
+<h1>{{ pollution.title }}</h1>
+
+@if (pollution.photoUrl) {
+  @if (!photoUnavailable) {
+    <img
+      class="photo"
+      [src]="pollution.photoUrl"
+      [alt]="'Photo de la pollution : ' + pollution.title"
+      (error)="photoUnavailable = true"
+    />
+  } @else {
+    <p class="photo-unavailable">
+      Impossible d'afficher la photo depuis
+      <a [href]="pollution.photoUrl" target="_blank" rel="noopener">{{ pollution.photoUrl }}</a>
+    </p>
+  }
+}
+
+<dl class="details">
+  <div>
+    <dt>Type de pollution</dt>
+    <dd><span class="badge">{{ pollution.type | pollutionTypeLabel }}</span></dd>
+  </div>
+
+  <div>
+    <dt>Date de l'observation</dt>
+    <dd>{{ pollution.observationDate | date: 'fullDate' }}</dd>
+  </div>
+
+  <div class="full-width">
+    <dt>Lieu</dt>
+    <dd>
+      {{ pollution.location }}
+      <a class="map-link" [href]="mapUrl" target="_blank" rel="noopener">Voir sur la carte ↗</a>
+    </dd>
+  </div>
+
+  <div>
+    <dt>Latitude</dt>
+    <dd>{{ pollution.latitude | number: '1.0-6' }}°</dd>
+  </div>
+
+  <div>
+    <dt>Longitude</dt>
+    <dd>{{ pollution.longitude | number: '1.0-6' }}°</dd>
+  </div>
+
+  <div class="full-width">
+    <dt>Description</dt>
+    <dd class="description">{{ pollution.description }}</dd>
+  </div>
+</dl>

@@ -1,10 +1,10 @@
-.entete {
+.site-header {
   background: var(--space-indigo);
   box-shadow: 0 2px 8px rgba(0, 5, 5, 0.25);
 }
 
-// Liens à gauche, profil à droite
-.contenu {
+// Links on the left, profile on the right
+.header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -15,7 +15,7 @@
   padding: 0 1rem;
 }
 
-.navigation {
+.nav {
   display: flex;
   flex-wrap: wrap;
   column-gap: 2rem;
@@ -31,7 +31,7 @@
       color: var(--white);
     }
 
-    &.actif {
+    &.active {
       border-bottom-color: var(--pale-sky);
       color: var(--white);
     }

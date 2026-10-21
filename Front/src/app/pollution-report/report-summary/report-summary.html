@@ -1,0 +1,9 @@
+<p class="status">✓ Déclaration enregistrée</p>
+
+<app-pollution-info [pollution]="pollution" />
+
+<div class="actions">
+  <a class="list-link" routerLink="/pollutions">Voir toutes les pollutions</a>
+  <!-- The pollution is saved: editing it goes through the edit page (PUT), not through a new report -->
+  <a class="edit" [routerLink]="['/pollutions', pollution.id, 'edit']">Modifier la déclaration</a>
+</div>
