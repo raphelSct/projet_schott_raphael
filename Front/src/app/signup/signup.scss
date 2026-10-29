@@ -1,0 +1,9 @@
+@use '../../styles/mixins';
+
+:host {
+  @include mixins.card;
+}
+
+.api-error {
+  @include mixins.error-message;
+}

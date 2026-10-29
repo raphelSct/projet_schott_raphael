@@ -1,0 +1,67 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid var(--pale-sky);
+  border-radius: 50%;
+  background: var(--dusty-grape);
+  color: var(--white);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover,
+  &[aria-expanded='true'] {
+    background: var(--white);
+    color: var(--space-indigo);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--pale-sky);
+    outline-offset: 2px;
+  }
+}
+
+// Profile summary, below the avatar and aligned with its right edge
+.panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 10;
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 2rem));
+  padding: 1rem 1.25rem;
+  border-top: 4px solid var(--space-indigo);
+  border-radius: 8px;
+  background: var(--white);
+  box-shadow: 0 4px 16px rgba(59, 51, 85, 0.25);
+  color: var(--black);
+
+  .name {
+    margin: 0 0 0.75rem;
+    color: var(--space-indigo);
+    font-weight: 700;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.35rem 1rem;
+    margin: 0;
+  }
+
+  dt {
+    color: var(--dusty-grape);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
