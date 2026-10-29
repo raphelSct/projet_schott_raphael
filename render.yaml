@@ -39,7 +39,7 @@ services:
   - type: web
     name: pollution-front
     runtime: static
-    rootDir: front
+    rootDir: Front
     buildCommand: npm install && npm run build
     staticPublishPath: dist/pollution/browser
     routes:
