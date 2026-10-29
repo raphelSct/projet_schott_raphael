@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "tp02": {
+    "pollution": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -66,10 +66,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "tp02:build:production"
+              "buildTarget": "pollution:build:production"
             },
             "development": {
-              "buildTarget": "tp02:build:development"
+              "buildTarget": "pollution:build:development"
             }
           },
           "defaultConfiguration": "development"
