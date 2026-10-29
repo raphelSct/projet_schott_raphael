@@ -1,0 +1,19 @@
+<a class="back-link" [routerLink]="['/pollutions', id]">← Retour au détail</a>
+
+@if (pollution(); as toEdit) {
+  <!-- The form is only created once the pollution is loaded: it is prefilled when it initializes -->
+  <app-pollution-form
+    heading="Modifier la pollution"
+    submitLabel="Enregistrer"
+    [initialValue]="toEdit"
+    (pollutionSubmitted)="save($event)"
+  />
+
+  @if (saveError(); as message) {
+    <p class="api-error" role="alert">{{ message }}</p>
+  }
+} @else if (error(); as message) {
+  <p class="api-error" role="alert">{{ message }}</p>
+} @else {
+  <p class="state-message">Chargement de la pollution…</p>
+}

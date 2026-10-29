@@ -1,7 +1,7 @@
-// Configuration de développement (ng serve) : remplace environment.ts via angular.json
+// Development configuration (ng serve): replaces environment.ts through angular.json
 export const environment = {
-  // URL de l'API lancée en local, quand elle existera
+  // URL of the API running locally, once it exists
   apiUrl: 'http://localhost:3000',
-  // Réponses de l'API simulées par api-simulee.interceptor.ts
-  apiSimulee: true,
+  // API responses simulated by the interceptors in src/app/interceptors/
+  mockApi: true,
 };

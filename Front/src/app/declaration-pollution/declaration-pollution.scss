@@ -1,6 +1,0 @@
-@use '../../styles/mixins';
-
-// Carte commune au formulaire et au récapitulatif
-:host {
-  @include mixins.carte;
-}

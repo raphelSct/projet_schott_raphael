@@ -1,13 +1,20 @@
-<header class="entete">
-  <div class="contenu">
-    @if (utilisateur(); as inscrit) {
-      <nav class="navigation">
-        <a routerLink="/declaration" routerLinkActive="actif" ariaCurrentWhenActive="page">Déclarer une pollution</a>
+<header class="site-header">
+  <div class="header-content">
+    @if (user(); as currentUser) {
+      <nav class="nav">
+        <!-- exact: the list must not stay highlighted on /pollutions/new -->
+        <a
+          routerLink="/pollutions"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+        >Pollutions</a>
+        <a routerLink="/pollutions/new" routerLinkActive="active" ariaCurrentWhenActive="page">Déclarer une pollution</a>
       </nav>
-      <app-profil-utilisateur [utilisateur]="inscrit" />
+      <app-user-profile [user]="currentUser" />
     } @else {
-      <nav class="navigation">
-        <a routerLink="/inscription" routerLinkActive="actif" ariaCurrentWhenActive="page">Inscription</a>
+      <nav class="nav">
+        <a routerLink="/signup" routerLinkActive="active" ariaCurrentWhenActive="page">Inscription</a>
       </nav>
     }
   </div>

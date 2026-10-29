@@ -1,0 +1,5 @@
+<app-signup-form [submitting]="submitting()" (userSubmitted)="signUp($event)" />
+
+@if (error(); as message) {
+  <p class="api-error" role="alert">{{ message }}</p>
+}

@@ -1,0 +1,87 @@
+@use '../../../styles/mixins';
+
+:host {
+  display: block;
+}
+
+h1 {
+  margin: 0 0 1.25rem;
+  color: var(--space-indigo);
+  overflow-wrap: anywhere;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  margin-bottom: 1.25rem;
+  border-radius: 6px;
+  background: var(--pale-sky);
+}
+
+.photo-unavailable {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--error);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--pale-sky) 30%, var(--white));
+  color: var(--dusty-grape);
+  overflow-wrap: anywhere;
+
+  a {
+    color: var(--space-indigo);
+  }
+}
+
+// Grid of tiles: 2 columns on wide screens, a single one on mobile
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+
+  > div {
+    min-width: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--pale-sky) 30%, var(--white));
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  dt {
+    margin-bottom: 0.25rem;
+    color: var(--dusty-grape);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--black);
+    overflow-wrap: anywhere;
+  }
+}
+
+.badge {
+  @include mixins.badge;
+}
+
+.map-link {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--space-indigo);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+// Keeps the line breaks typed in the textarea
+.description {
+  white-space: pre-line;
+  line-height: 1.5;
+}
