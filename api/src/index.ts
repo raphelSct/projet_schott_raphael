@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
+import config from "./config";
 import db from "./models";
 import initRoutes from "./routes";
 
@@ -29,41 +30,59 @@ app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "OK" });
 });
 
-db.sequelize
-  .sync()
-  .then(async () => {
-    console.log("Synced db.");
-    try {
-      const count = await db.pollutions.count();
-      if (count === 0) {
-        await db.pollutions.bulkCreate([
-          { ville: "Paris", polluant: "PM2.5", valeur: 28.5, date: "2026-10-18", description: "Qualité de l'air dégradée au centre-ville" },
-          { ville: "Lyon", polluant: "NO2", valeur: 42.1, date: "2026-10-18", description: "Pic de pollution lié au trafic routier" },
-          { ville: "Marseille", polluant: "O3", valeur: 55.0, date: "2026-10-17", description: "Ozone élevé en zone côtière ensoleillée" },
-          { ville: "Strasbourg", polluant: "PM10", valeur: 34.2, date: "2026-10-18", description: "Particules en suspension modérées" },
-          { ville: "Bordeaux", polluant: "PM2.5", valeur: 15.3, date: "2026-10-16", description: "Bonne qualité globale de l'air" },
-          { ville: "Lille", polluant: "NO2", valeur: 38.7, date: "2026-10-17", description: "Trafic dense aux abords de la rocade" },
-          { ville: "Nantes", polluant: "CO2", valeur: 12.0, date: "2026-10-18", description: "Conditions atmosphériques favorables" }
-        ]);
-        console.log("Jeu de données initial pour la table pollution inséré avec succès.");
-      }
-    } catch (seedErr: unknown) {
-      console.warn("Remarque : impossible d'insérer les données d'initialisation :", seedErr);
-    }
-  })
-  .catch((err: Error) => {
-    console.log("Failed to sync db: " + err.message);
-  });
-
-
 initRoutes(app);
 
-// set port, listen on 0.0.0.0 for Render and container environments
-const PORT = Number(process.env.PORT) || 3000;
-const HOST = "0.0.0.0";
+// Readable cause of a connection error. Sequelize keeps the driver's error in "parent", and
+// "localhost" tries IPv6 then IPv4: Node groups both failures in an AggregateError without a message
+function describeError(err: unknown): string {
+  if (err instanceof AggregateError) {
+    return err.errors.map(describeError).join(" / ");
+  }
+  if (err instanceof Error) {
+    const parent = (err as Error & { parent?: unknown }).parent;
+    return err.message || (parent ? describeError(parent) : err.name);
+  }
+  return String(err);
+}
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server is running on http://${HOST}:${PORT}.`);
-});
+// The table is created by api/sql/create-table-pollution.sql, not by the API: this checks that it
+// exists with every column of the model (an old version of the table would fail on every request)
+async function checkPollutionTable(): Promise<void> {
+  const tableColumns = Object.keys(await db.pollutions.describe());
+  const missing = Object.values(db.pollutions.getAttributes())
+    .map((attribute) => attribute.field ?? "")
+    .filter((column) => !tableColumns.includes(column));
+  if (missing.length > 0) {
+    throw new Error(`missing columns ${missing.join(", ")}`);
+  }
+}
+
+// The API only listens once the database is reachable and the table is ready: a wrong configuration
+// stops it with a clear message, instead of starting an API that fails on every request
+async function start(): Promise<void> {
+  try {
+    await db.sequelize.authenticate();
+    console.log("Connected to the database.");
+  } catch (err: unknown) {
+    console.error(`Unable to connect to the database: ${describeError(err)}`);
+    process.exit(1);
+  }
+
+  try {
+    await checkPollutionTable();
+  } catch (err: unknown) {
+    console.error(
+      `The "pollution" table is not ready (${describeError(err)}): run api/sql/create-table-pollution.sql in pgAdmin.`
+    );
+    process.exit(1);
+  }
+
+  // listen on 0.0.0.0 for Render and container environments
+  app.listen(config.port, "0.0.0.0", () => {
+    console.log(`Server is running on http://0.0.0.0:${config.port}.`);
+  });
+}
+
+start();
 
 export default app;
