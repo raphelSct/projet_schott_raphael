@@ -1,24 +1,31 @@
-export interface DatabaseConfig {
-  host: string;
-  port: string;
-  user: string;
-  password: string;
-  bdname: string;
+import { existsSync } from "node:fs";
+
+// Local development: variables are read from api/.env, which is never committed (see .env.example).
+// On Render, they come from render.yaml and the dashboard: there is no .env file there.
+if (existsSync(".env")) {
+  process.loadEnvFile(".env");
+}
+
+function requiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing environment variable ${name}: copy api/.env.example to api/.env and fill it in.`);
+  }
+  return value;
 }
 
 export interface AppConfig {
-  BDD: DatabaseConfig;
+  port: number;
+  // Full connection URL, password included: it only ever comes from the environment
+  databaseUrl: string;
+  // "true" or "false" forces SSL on or off; when undefined, it is deduced from the database host
+  databaseSsl?: string;
 }
 
 export const config: AppConfig = {
-  BDD: {
-    host: process.env.DB_HOST || "dpg-d1hnd1bipnbc73faldmg-a.oregon-postgres.render.com",
-    port: process.env.DB_PORT || "5432",
-    user: process.env.DB_USER || "cnam_db_6xuy_user",
-    password: process.env.DB_PASSWORD || "fGkskYzc8Vwqho8X9bTXcnGq42q3X9bE",
-    bdname: process.env.DB_NAME || "cnam_db_6xuy"
-  }
+  port: Number(process.env.PORT) || 3000,
+  databaseUrl: requiredEnv("DATABASE_URL"),
+  databaseSsl: process.env.DB_SSL,
 };
 
-export const { BDD } = config;
 export default config;

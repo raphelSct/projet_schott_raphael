@@ -11,6 +11,9 @@
 npm-debug.log
 yarn-error.log
 
+# Local environment variables (database password): never committed, see .env.example
+.env
+
 # IDEs and editors
 .idea/
 .project
