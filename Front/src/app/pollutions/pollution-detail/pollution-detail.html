@@ -7,10 +7,6 @@
     <button type="button" class="delete" (click)="remove(detail)">Supprimer</button>
     <a class="edit" [routerLink]="['/pollutions', detail.id, 'edit']">Modifier</a>
   </div>
-
-  @if (deleteError(); as message) {
-    <p class="api-error" role="alert">{{ message }}</p>
-  }
 } @else if (error(); as message) {
   <p class="api-error" role="alert">{{ message }}</p>
 } @else {

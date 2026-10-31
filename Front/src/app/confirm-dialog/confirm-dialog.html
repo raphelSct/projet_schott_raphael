@@ -1,0 +1,22 @@
+<dialog
+  #dialog
+  class="dialog"
+  aria-labelledby="confirm-dialog-title"
+  aria-describedby="confirm-dialog-message"
+  (keydown.escape)="confirmService.answer(false)"
+  (close)="cancelIfStillAsked()"
+  (click)="cancelOnBackdropClick($event)"
+>
+  @if (confirmService.request(); as request) {
+    <div class="content">
+      <h2 id="confirm-dialog-title">{{ request.title }}</h2>
+      <p id="confirm-dialog-message">{{ request.message }}</p>
+
+      <div class="actions">
+        <!-- First button: it gets the focus, so Enter does not delete by mistake -->
+        <button type="button" class="cancel" (click)="confirmService.answer(false)">Annuler</button>
+        <button type="button" class="confirm" (click)="confirmService.answer(true)">{{ request.confirmLabel }}</button>
+      </div>
+    </div>
+  }
+</dialog>

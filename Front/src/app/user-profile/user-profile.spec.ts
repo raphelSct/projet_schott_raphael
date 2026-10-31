@@ -34,6 +34,17 @@ describe('UserProfile', () => {
     expect(element.querySelector('.panel')?.textContent).toContain('alice.dupont@example.com');
   });
 
+  it('asks the parent to log out', async () => {
+    const logoutSpy = vi.fn();
+    fixture.componentInstance.logout.subscribe(logoutSpy);
+
+    element.querySelector('button')!.click();
+    await fixture.whenStable();
+    element.querySelector<HTMLButtonElement>('.logout')!.click();
+
+    expect(logoutSpy).toHaveBeenCalled();
+  });
+
   it('closes on a click outside', async () => {
     element.querySelector('button')!.click();
     await fixture.whenStable();

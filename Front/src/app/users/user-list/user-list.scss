@@ -1,0 +1,88 @@
+@use '../../../styles/mixins';
+
+:host {
+  @include mixins.card;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  color: var(--space-indigo);
+}
+
+.count {
+  margin: 0 0 1.25rem;
+  color: var(--dusty-grape);
+  font-weight: 600;
+}
+
+.users {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--pale-sky);
+
+  &:last-child {
+    border-bottom: 1px solid var(--pale-sky);
+  }
+
+  // Same look as the profile avatar in the header
+  .avatar {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--dusty-grape);
+    color: var(--white);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .identity {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .name {
+    margin: 0;
+    color: var(--space-indigo);
+    font-weight: 600;
+  }
+
+  .me {
+    color: var(--dusty-grape);
+    font-weight: 400;
+  }
+
+  .meta {
+    margin: 0.15rem 0 0;
+    color: var(--dusty-grape);
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+  }
+
+  .delete {
+    @include mixins.button-danger;
+    flex-shrink: 0;
+    padding: 0.4rem 0.9rem;
+  }
+}
+
+.state-message {
+  padding: 1rem 0;
+  color: var(--dusty-grape);
+}
+
+.api-error {
+  @include mixins.error-message;
+  margin-bottom: 1rem;
+}

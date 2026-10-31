@@ -7,3 +7,7 @@
 .api-error {
   @include mixins.error-message;
 }
+
+.switch {
+  @include mixins.switch-link;
+}

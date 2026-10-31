@@ -10,10 +10,12 @@
           ariaCurrentWhenActive="page"
         >Pollutions</a>
         <a routerLink="/pollutions/new" routerLinkActive="active" ariaCurrentWhenActive="page">Déclarer une pollution</a>
+        <a routerLink="/users" routerLinkActive="active" ariaCurrentWhenActive="page">Utilisateurs</a>
       </nav>
-      <app-user-profile [user]="currentUser" />
+      <app-user-profile [user]="currentUser" (logout)="logout()" />
     } @else {
       <nav class="nav">
+        <a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Connexion</a>
         <a routerLink="/signup" routerLinkActive="active" ariaCurrentWhenActive="page">Inscription</a>
       </nav>
     }
@@ -23,3 +25,7 @@
 <main>
   <router-outlet />
 </main>
+
+<!-- Shared by every page: ConfirmService and ToastService control them -->
+<app-confirm-dialog />
+<app-toast-container />

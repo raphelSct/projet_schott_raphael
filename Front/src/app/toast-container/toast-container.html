@@ -1,0 +1,12 @@
+<!-- Live region: screen readers announce the toasts as they appear (errors right away, thanks to role="alert") -->
+<div class="toasts" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast" [class.error]="toast.kind === 'error'" [attr.role]="toast.kind === 'error' ? 'alert' : 'status'">
+      <span class="icon" aria-hidden="true">{{ toast.kind === 'error' ? '!' : '✓' }}</span>
+      <p class="message">{{ toast.message }}</p>
+      <button type="button" class="close" aria-label="Fermer la notification" (click)="toastService.dismiss(toast.id)">
+        ×
+      </button>
+    </div>
+  }
+</div>

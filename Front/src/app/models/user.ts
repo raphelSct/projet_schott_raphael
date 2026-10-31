@@ -12,3 +12,6 @@ export interface NewUser {
 export interface User extends Omit<NewUser, 'password'> {
   id: string;
 }
+
+// Data sent to the API to log in
+export type Credentials = Pick<NewUser, 'username' | 'password'>;

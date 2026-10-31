@@ -5,6 +5,7 @@ import { NEVER, Observable, of, throwError } from 'rxjs';
 import { NewPollution, Pollution } from '../../models/pollution';
 import { PollutionForm } from '../../pollution-report/pollution-form/pollution-form';
 import { PollutionService } from '../../services/pollution.service';
+import { ToastService } from '../../services/toast.service';
 import { PollutionEdit } from './pollution-edit';
 
 const pollution: Pollution = {
@@ -50,7 +51,7 @@ describe('PollutionEdit', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('#title')?.value).toBe('Décharge sauvage');
   });
 
-  it('saves with a PUT on the id, then goes back to the detail page', async () => {
+  it('saves with a PUT on the id, then goes back to the detail page with a toast', async () => {
     const updateSpy = vi.fn((): Observable<Pollution> => of({ ...pollution, title: 'Nouveau titre' }));
     const fixture = await showEdit({ getOne: () => of(pollution), update: updateSpy });
 
@@ -58,9 +59,12 @@ describe('PollutionEdit', () => {
 
     expect(updateSpy).toHaveBeenCalledWith(expect.objectContaining({ title: 'Nouveau titre' }), '1');
     expect(TestBed.inject(Router).url).toBe('/pollutions/1');
+    expect(TestBed.inject(ToastService).toasts()).toEqual([
+      expect.objectContaining({ kind: 'success', message: 'Les modifications ont été enregistrées.' }),
+    ]);
   });
 
-  it('keeps the form and shows a message when saving fails', async () => {
+  it('keeps the form and shows an error toast when saving fails', async () => {
     const fixture = await showEdit({
       getOne: () => of(pollution),
       update: () => throwError(() => new Error('API unavailable')),
@@ -70,6 +74,8 @@ describe('PollutionEdit', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.querySelector('app-pollution-form')).toBeTruthy();
-    expect(element.querySelector('.api-error')?.textContent).toContain("L'enregistrement a échoué");
+    expect(TestBed.inject(ToastService).toasts()).toEqual([
+      expect.objectContaining({ kind: 'error', message: expect.stringContaining("L'enregistrement des modifications a échoué") }),
+    ]);
   });
 });

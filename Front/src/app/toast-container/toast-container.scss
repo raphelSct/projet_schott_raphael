@@ -1,0 +1,82 @@
+// Bottom right on wide screens, full width at the bottom on phones
+.toasts {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: min(24rem, calc(100vw - 2rem));
+}
+
+.toast {
+  --toast-color: var(--success);
+
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0.75rem 0.75rem 1rem;
+  border-left: 5px solid var(--toast-color);
+  border-radius: 6px;
+  background: var(--white);
+  box-shadow: 0 4px 16px rgba(0, 5, 5, 0.25);
+  animation: slide-in 200ms ease-out;
+
+  &.error {
+    --toast-color: var(--error);
+  }
+}
+
+.icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--toast-color);
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.message {
+  flex: 1;
+  margin: 0.15rem 0 0;
+  color: var(--black);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.close {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: var(--dusty-grape);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--pale-sky);
+    color: var(--space-indigo);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}

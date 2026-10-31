@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
 import { NewPollution, Pollution } from '../models/pollution';
 import { PollutionService } from '../services/pollution.service';
+import { ToastService } from '../services/toast.service';
 import { PollutionForm } from './pollution-form/pollution-form';
 import { PollutionReport } from './pollution-report';
 
@@ -33,19 +34,25 @@ async function report(response: Observable<Pollution>): Promise<ComponentFixture
 }
 
 describe('PollutionReport', () => {
-  it('shows the summary of the pollution saved by the API, with a link to edit it', async () => {
+  it('shows the summary of the pollution saved by the API, with a link to edit it and a toast', async () => {
     const element = (await report(of({ ...newPollution, id: '42' }))).nativeElement as HTMLElement;
+
+    expect(TestBed.inject(ToastService).toasts()).toEqual([
+      expect.objectContaining({ kind: 'success', message: 'La pollution a été déclarée.' }),
+    ]);
 
     expect(element.querySelector('app-pollution-form')).toBeNull();
     expect(element.querySelector('app-report-summary h1')?.textContent).toContain('Décharge sauvage');
     expect(element.querySelector('app-report-summary .edit')?.getAttribute('href')).toBe('/pollutions/42/edit');
   });
 
-  it('keeps the form with what was typed and shows a message when saving fails', async () => {
+  it('keeps the form with what was typed and shows an error toast when saving fails', async () => {
     const element = (await report(throwError(() => new Error('API unavailable')))).nativeElement as HTMLElement;
 
     expect(element.querySelector('app-report-summary')).toBeNull();
     expect(element.querySelector('app-pollution-form')).toBeTruthy();
-    expect(element.querySelector('.api-error')?.textContent).toContain('a échoué');
+    expect(TestBed.inject(ToastService).toasts()).toEqual([
+      expect.objectContaining({ kind: 'error', message: expect.stringContaining('a échoué') }),
+    ]);
   });
 });

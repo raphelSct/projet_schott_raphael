@@ -49,10 +49,6 @@
     }
   </p>
 
-  @if (deleteError(); as message) {
-    <p class="api-error" role="alert">{{ message }}</p>
-  }
-
   <ul class="grid">
     @for (pollution of filteredPollutions(); track pollution.id) {
       <li class="pollution">
