@@ -7,7 +7,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { NewPollution, POLLUTION_TYPES } from '../../models/pollution';
+import { MAX_SEVERITY_INDEX, NewPollution, POLLUTION_TYPES } from '../../models/pollution';
 import { PollutionTypeLabelPipe } from '../../pipes/pollution-type-label.pipe';
 
 const notBlank = Validators.pattern(/\S/);
@@ -23,6 +23,11 @@ function validObservationDate(control: AbstractControl<string | null>): Validati
   const endOfToday = new Date();
   endOfToday.setHours(23, 59, 59, 999);
   return date > endOfToday ? { futureDate: true } : null;
+}
+
+// The severity index is a whole number: 72.5 is refused
+function integer(control: AbstractControl<number | null>): ValidationErrors | null {
+  return control.value === null || Number.isInteger(control.value) ? null : { integer: true };
 }
 
 @Component({
@@ -41,10 +46,12 @@ export class PollutionForm implements OnInit {
   @Output() pollutionSubmitted = new EventEmitter<NewPollution>();
 
   readonly pollutionTypes = POLLUTION_TYPES;
+  readonly maxSeverityIndex = MAX_SEVERITY_INDEX;
 
   form = new FormGroup({
     title: new FormControl('',{validators:[Validators.required, notBlank]}),
     type: new FormControl('',{validators:[Validators.required]}),
+    severityIndex: new FormControl<number | null>(null,{validators:[Validators.required,Validators.min(0),Validators.max(MAX_SEVERITY_INDEX),integer]}),
     description: new FormControl('',{validators:[Validators.required, notBlank]}),
     observationDate: new FormControl('',{validators:[Validators.required, validObservationDate]}),
     location: new FormControl('',{validators:[Validators.required, notBlank]}),
@@ -75,6 +82,7 @@ export class PollutionForm implements OnInit {
     return {
       title: formValue.title.trim(),
       type: formValue.type,
+      severityIndex: Number(formValue.severityIndex),
       description: formValue.description.trim(),
       observationDate: formValue.observationDate,
       location: formValue.location.trim(),

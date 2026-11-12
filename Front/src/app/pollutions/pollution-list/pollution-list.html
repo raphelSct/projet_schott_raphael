@@ -59,7 +59,16 @@
         }
 
         <div class="content">
-          <span class="badge">{{ pollution.type | pollutionTypeLabel }}</span>
+          <div class="tags">
+            <span class="badge">{{ pollution.type | pollutionTypeLabel }}</span>
+            <span
+              class="level"
+              [appHighlightPollution]="pollution.severityIndex"
+              [attr.title]="'Indice de dangerosité : ' + pollution.severityIndex"
+            >
+              Niveau : {{ pollution.severityIndex | pollutionLevel }}
+            </span>
+          </div>
           <h2>
             <a [routerLink]="['/pollutions', pollution.id]">{{ pollution.title }}</a>
           </h2>

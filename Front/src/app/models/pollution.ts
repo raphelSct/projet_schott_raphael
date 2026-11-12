@@ -12,10 +12,14 @@ export const POLLUTION_TYPE_LABELS: Record<PollutionType, string> = {
   other: 'Autre',
 };
 
+// The severity index goes from 0 to this value (the level shown on screen comes from it, see pollution-level.ts)
+export const MAX_SEVERITY_INDEX = 1000;
+
 // Pollution entered in the form, before the API saves it
 export interface NewPollution {
   title: string;
   type: PollutionType;
+  severityIndex: number;
   description: string;
   observationDate: string;
   location: string;

@@ -12,6 +12,7 @@ const pollution: Pollution = {
   id: '1',
   title: 'Décharge sauvage',
   type: 'illegal-dumping',
+  severityIndex: 72,
   description: 'Sacs poubelle sur la berge',
   observationDate: '2026-10-01',
   location: 'Paris',

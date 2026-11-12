@@ -72,6 +72,16 @@ h1 {
   @include mixins.badge;
 }
 
+.level {
+  @include mixins.level-badge;
+}
+
+.index {
+  margin-left: 0.4rem;
+  color: var(--dusty-grape);
+  font-size: 0.85rem;
+}
+
 .map-link {
   display: block;
   margin-top: 0.25rem;

@@ -5,12 +5,17 @@ export const POLLUTION_TYPES = ["plastic", "chemical", "illegal-dumping", "water
 
 export type PollutionType = (typeof POLLUTION_TYPES)[number];
 
+// Whole number from 0 to this value (same as the front). The front turns it into a level:
+// 0-20 low, 21-50 moderate, 51-100 high, 101 and more dangerous.
+export const MAX_SEVERITY_INDEX = 1000;
+
 // Same fields as the front's Pollution model: they are the JSON keys exchanged with it.
 // The table itself (api/sql/create-table-pollution.sql) uses snake_case columns.
 export interface PollutionAttributes {
   id: string;
   title: string;
   type: PollutionType;
+  severityIndex: number;
   description: string;
   observationDate: string;
   location: string;
@@ -55,6 +60,16 @@ export default function definePollutions(
         validate: {
           notNull: { msg: "Le type de pollution est requis." },
           isIn: { args: [[...POLLUTION_TYPES]], msg: "Ce type de pollution n'existe pas." }
+        }
+      },
+      severityIndex: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: { msg: "L'indice de dangerosité est requis." },
+          isInt: { msg: "L'indice de dangerosité doit être un nombre entier." },
+          min: { args: [0], msg: `L'indice de dangerosité doit être compris entre 0 et ${MAX_SEVERITY_INDEX}.` },
+          max: { args: [MAX_SEVERITY_INDEX], msg: `L'indice de dangerosité doit être compris entre 0 et ${MAX_SEVERITY_INDEX}.` }
         }
       },
       description: {
@@ -114,7 +129,7 @@ export default function definePollutions(
     {
       tableName: "pollution",
       freezeTableName: true,
-      // observationDate ↔ observation_date, photoUrl ↔ photo_url
+      // observationDate ↔ observation_date, severityIndex ↔ severity_index, photoUrl ↔ photo_url
       underscored: true,
       timestamps: false
     }
