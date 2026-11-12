@@ -4,7 +4,9 @@ import { DatePipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize, map } from 'rxjs';
+import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
 import { POLLUTION_TYPES, POLLUTION_TYPE_LABELS, Pollution } from '../../models/pollution';
+import { PollutionLevelPipe } from '../../pipes/pollution-level.pipe';
 import { PollutionTypeLabelPipe } from '../../pipes/pollution-type-label.pipe';
 import { ConfirmService } from '../../services/confirm.service';
 import { PollutionService } from '../../services/pollution.service';
@@ -17,7 +19,7 @@ function normalizeText(text: string): string {
 
 @Component({
   selector: 'app-pollution-list',
-  imports: [DatePipe, PollutionTypeLabelPipe, ReactiveFormsModule, RouterLink],
+  imports: [DatePipe, HighlightPollutionDirective, PollutionLevelPipe, PollutionTypeLabelPipe, ReactiveFormsModule, RouterLink],
   templateUrl: './pollution-list.html',
   styleUrl: './pollution-list.scss',
 })

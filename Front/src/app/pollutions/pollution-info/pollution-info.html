@@ -23,11 +23,21 @@
   </div>
 
   <div>
+    <dt>Dangerosité</dt>
+    <dd>
+      <span class="level" [appHighlightPollution]="pollution.severityIndex">
+        {{ pollution.severityIndex | pollutionLevel }}
+      </span>
+      <span class="index">indice {{ pollution.severityIndex }}</span>
+    </dd>
+  </div>
+
+  <div>
     <dt>Date de l'observation</dt>
     <dd>{{ pollution.observationDate | date: 'fullDate' }}</dd>
   </div>
 
-  <div class="full-width">
+  <div>
     <dt>Lieu</dt>
     <dd>
       {{ pollution.location }}

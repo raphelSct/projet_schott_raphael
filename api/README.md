@@ -18,9 +18,12 @@ Les tables sont créées par les scripts du dossier [`sql/`](sql/), pas par l'AP
 | Script | Effet |
 |---|---|
 | [`create-table-pollution.sql`](sql/create-table-pollution.sql) | supprime puis recrée la table `pollution`, et insère 5 pollutions de démonstration |
+| [`add-severity-index-to-pollution.sql`](sql/add-severity-index-to-pollution.sql) | ajoute la colonne `severity_index` à une table `pollution` **existante**, sans supprimer ses lignes |
 | [`create-table-users.sql`](sql/create-table-users.sql) | supprime puis recrée la table `users` (vide) |
 
 Chaque script ne touche qu'à sa propre table : il suffit de lancer celui de la table à créer, sans perdre les données de l'autre.
+
+**Base déjà en service ?** Ne relancez pas `create-table-pollution.sql` : il efface les pollutions. Pour la colonne de l'indice de dangerosité (`severity_index`, ajoutée après la première version de la table), lancez `add-severity-index-to-pollution.sql` : les pollutions existantes reçoivent l'indice 0 (niveau « Faible »), sauf les 5 pollutions de démonstration qui retrouvent leur indice d'origine. Lancez-le **avant** de déployer cette version de l'API, qui refuse de démarrer si la colonne manque.
 
 Les colonnes sont en snake_case (`observation_date`, `first_name`…) ; Sequelize les convertit vers les champs du front (`observationDate`, `firstName`…).
 
@@ -34,7 +37,7 @@ npm run dev
 Au démarrage, la console doit afficher `Connected to the database.` puis `Server is running…`. Sinon, l'API s'arrête avec la cause :
 
 - `Unable to connect to the database: …` : URL, mot de passe, hôte ou SSL incorrect ;
-- `The "pollution" table is not ready (…)` (ou `"users"`) : la table n'existe pas ou n'a pas les bonnes colonnes, il faut exécuter le script SQL indiqué.
+- `The "pollution" table is not ready (…)` (ou `"users"`) : la table n'existe pas ou n'a pas les bonnes colonnes, il faut exécuter le script SQL indiqué (pour la table `pollution`, le message propose aussi le script qui conserve les lignes existantes).
 
 Pour afficher les requêtes SQL envoyées par Sequelize, ajouter `DB_LOGGING=true` dans le `.env`.
 
@@ -52,7 +55,9 @@ Préfixe : `/api/pollutions` (aussi disponible en `/api/pollution`).
 | `PUT /api/pollutions/:id` | pollution complète | 200 + la pollution modifiée, 400 ou 404 |
 | `DELETE /api/pollutions/:id` | — | 204 sans contenu, ou 404 |
 
-Les données sont validées par l'API (champs requis, type connu, coordonnées, date non future, URL de photo) : une erreur 400 renvoie `{ "message": "…" }` avec les messages en français.
+Les données sont validées par l'API (champs requis, type connu, indice de dangerosité, coordonnées, date non future, URL de photo) : une erreur 400 renvoie `{ "message": "…" }` avec les messages en français.
+
+`severityIndex` est l'indice de dangerosité : un **nombre entier de 0 à 1000**, obligatoire. L'API ne stocke que ce nombre ; c'est le front qui en déduit le niveau affiché (0-20 Faible, 21-50 Modérée, 51-100 Élevée, 101 et plus Dangereuse).
 
 ### Utilisateurs
 

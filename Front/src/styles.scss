@@ -9,6 +9,12 @@
   // Semantic colors (form validation)
   --error: #c62828;
   --success: #2e7d32;
+
+  // Pollution levels, used by HighlightPollutionDirective (dark text on each of them stays readable)
+  --level-low: #a5d6a7;
+  --level-moderate: #ffeb3b;
+  --level-high: #ffa726;
+  --level-dangerous: #e53935;
 }
 
 body {
