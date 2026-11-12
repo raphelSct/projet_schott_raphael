@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
-import { ValidationError } from "sequelize";
 import db from "../models";
 import { PollutionCreationAttributes, PollutionInstance } from "../models/pollutions.model";
+import { UUID_PATTERN, sendError } from "../utils/http";
 
 const Pollutions = db.pollutions;
-
-// Ids are UUIDs: any other value cannot match a pollution (and PostgreSQL would reject it)
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // Only the fields the client may set: the id is chosen by the API.
 // A missing photo becomes null, so that a PUT without photoUrl removes the photo.
@@ -31,16 +28,6 @@ async function findFromParams(req: Request, res: Response): Promise<PollutionIns
     res.status(404).json({ message: "Cette pollution n'existe pas." });
   }
   return pollution;
-}
-
-// 400 with the validation messages, 500 otherwise (details stay in the server logs)
-function sendError(res: Response, err: unknown, message: string): void {
-  if (err instanceof ValidationError) {
-    res.status(400).json({ message: err.errors.map((e) => e.message).join(" ") });
-    return;
-  }
-  console.error(message, err);
-  res.status(500).json({ message });
 }
 
 // GET /api/pollutions → 200 with every pollution, most recent observation first

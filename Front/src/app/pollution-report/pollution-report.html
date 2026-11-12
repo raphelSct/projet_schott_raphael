@@ -2,8 +2,4 @@
   <app-report-summary [pollution]="pollution" />
 } @else {
   <app-pollution-form (pollutionSubmitted)="showSummary($event)" />
-
-  @if (error(); as message) {
-    <p class="api-error" role="alert">{{ message }}</p>
-  }
 }

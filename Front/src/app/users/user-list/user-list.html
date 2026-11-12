@@ -1,0 +1,41 @@
+<h1>Utilisateurs inscrits</h1>
+
+@if (loading()) {
+  <p class="state-message">Chargement des utilisateurs…</p>
+} @else if (error(); as message) {
+  <p class="api-error" role="alert">{{ message }}</p>
+} @else {
+  <p class="count">{{ users().length }} {{ users().length > 1 ? 'utilisateurs' : 'utilisateur' }}</p>
+
+  <ul class="users">
+    @for (user of users(); track user.id) {
+      @let isMe = user.id === currentUser()?.id;
+      <li class="user">
+        <span class="avatar" aria-hidden="true">{{ initials(user) }}</span>
+
+        <div class="identity">
+          <p class="name">
+            {{ user.firstName }} {{ user.lastName }}
+            @if (isMe) {
+              <span class="me">(vous)</span>
+            }
+          </p>
+          <p class="meta">{{ user.username }} · {{ user.email }}</p>
+        </div>
+
+        @if (!isMe) {
+          <button
+            type="button"
+            class="delete"
+            [attr.aria-label]="'Supprimer le compte de ' + user.firstName + ' ' + user.lastName"
+            (click)="remove(user)"
+          >
+            Supprimer
+          </button>
+        }
+      </li>
+    } @empty {
+      <li class="state-message">Aucun utilisateur inscrit.</li>
+    }
+  </ul>
+}

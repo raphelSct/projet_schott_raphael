@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import config from "../config";
 import definePollutions, { PollutionModel } from "./pollutions.model";
+import defineUsers, { UserModel } from "./users.model";
 
 // Render's external URL (host ending in .render.com, used locally and by pgAdmin) requires SSL.
 // Its internal URL (host without a domain, used by the API deployed on Render) and a local database do not.
@@ -34,12 +35,14 @@ export interface Database {
   Sequelize: typeof Sequelize;
   sequelize: Sequelize;
   pollutions: PollutionModel;
+  users: UserModel;
 }
 
 export const db: Database = {
   Sequelize,
   sequelize,
-  pollutions: definePollutions(sequelize, Sequelize)
+  pollutions: definePollutions(sequelize, Sequelize),
+  users: defineUsers(sequelize)
 };
 
 export default db;

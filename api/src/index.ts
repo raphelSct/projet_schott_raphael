@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
+import { Model, ModelStatic } from "sequelize";
 import config from "./config";
 import db from "./models";
 import initRoutes from "./routes";
@@ -45,11 +46,16 @@ function describeError(err: unknown): string {
   return String(err);
 }
 
-// The table is created by api/sql/create-table-pollution.sql, not by the API: this checks that it
-// exists with every column of the model (an old version of the table would fail on every request)
-async function checkPollutionTable(): Promise<void> {
-  const tableColumns = Object.keys(await db.pollutions.describe());
-  const missing = Object.values(db.pollutions.getAttributes())
+// Tables are created by the scripts in api/sql/, not by the API: each model is paired with its script
+const tables: { model: ModelStatic<Model>; script: string }[] = [
+  { model: db.pollutions, script: "create-table-pollution.sql" },
+  { model: db.users, script: "create-table-users.sql" }
+];
+
+// Checks that the table exists with every column of the model (an old version of the table would fail on every request)
+async function checkTable(model: ModelStatic<Model>): Promise<void> {
+  const tableColumns = Object.keys(await model.describe());
+  const missing = Object.values(model.getAttributes())
     .map((attribute) => attribute.field ?? "")
     .filter((column) => !tableColumns.includes(column));
   if (missing.length > 0) {
@@ -57,7 +63,7 @@ async function checkPollutionTable(): Promise<void> {
   }
 }
 
-// The API only listens once the database is reachable and the table is ready: a wrong configuration
+// The API only listens once the database is reachable and the tables are ready: a wrong configuration
 // stops it with a clear message, instead of starting an API that fails on every request
 async function start(): Promise<void> {
   try {
@@ -68,13 +74,15 @@ async function start(): Promise<void> {
     process.exit(1);
   }
 
-  try {
-    await checkPollutionTable();
-  } catch (err: unknown) {
-    console.error(
-      `The "pollution" table is not ready (${describeError(err)}): run api/sql/create-table-pollution.sql in pgAdmin.`
-    );
-    process.exit(1);
+  for (const { model, script } of tables) {
+    try {
+      await checkTable(model);
+    } catch (err: unknown) {
+      console.error(
+        `The "${model.tableName}" table is not ready (${describeError(err)}): run api/sql/${script} in pgAdmin.`
+      );
+      process.exit(1);
+    }
   }
 
   // listen on 0.0.0.0 for Render and container environments

@@ -1,18 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { NewUser } from '../models/user';
+import { ToastService } from '../services/toast.service';
 import { UserService } from '../services/user.service';
 import { SignupForm } from './signup-form/signup-form';
 
 @Component({
   selector: 'app-signup',
-  imports: [SignupForm],
+  imports: [RouterLink, SignupForm],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
 })
 export class Signup {
   private readonly userService = inject(UserService);
+  private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
   // Signals rather than plain properties: the HTTP response arrives outside a template event,
@@ -29,7 +31,10 @@ export class Signup {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         // The service keeps the signed-up user: the rest of the application is now available
-        next: () => this.router.navigate(['/pollutions']),
+        next: (user) => {
+          this.toastService.success(`Bienvenue ${user.firstName}, votre compte a été créé.`);
+          this.router.navigate(['/pollutions']);
+        },
         error: (error: Error) => this.error.set(error.message),
       });
   }

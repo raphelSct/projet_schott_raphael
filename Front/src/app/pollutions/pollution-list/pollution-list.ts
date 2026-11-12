@@ -6,7 +6,9 @@ import { RouterLink } from '@angular/router';
 import { finalize, map } from 'rxjs';
 import { POLLUTION_TYPES, POLLUTION_TYPE_LABELS, Pollution } from '../../models/pollution';
 import { PollutionTypeLabelPipe } from '../../pipes/pollution-type-label.pipe';
+import { ConfirmService } from '../../services/confirm.service';
 import { PollutionService } from '../../services/pollution.service';
+import { ToastService } from '../../services/toast.service';
 
 // Lowercase, without accents: "Dépôt" and "depot" must match
 function normalizeText(text: string): string {
@@ -21,6 +23,8 @@ function normalizeText(text: string): string {
 })
 export class PollutionList implements OnInit {
   private readonly pollutionService = inject(PollutionService);
+  private readonly confirmService = inject(ConfirmService);
+  private readonly toastService = inject(ToastService);
 
   readonly pollutionTypes = POLLUTION_TYPES;
 
@@ -28,7 +32,6 @@ export class PollutionList implements OnInit {
   readonly pollutions = signal<Pollution[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
-  readonly deleteError = signal<string | null>(null);
 
   readonly filters = new FormGroup({
     search: new FormControl('', { nonNullable: true }),
@@ -71,18 +74,23 @@ export class PollutionList implements OnInit {
       });
   }
 
-  remove(pollution: Pollution): void {
-    if (!confirm(`Supprimer « ${pollution.title} » ?`)) {
+  async remove(pollution: Pollution): Promise<void> {
+    const confirmed = await this.confirmService.ask({
+      title: 'Supprimer cette pollution ?',
+      message: `« ${pollution.title} » sera définitivement supprimée.`,
+      confirmLabel: 'Supprimer',
+    });
+    if (!confirmed) {
       return;
     }
-    this.deleteError.set(null);
 
     this.pollutionService.delete(pollution.id).subscribe({
       next:()=>{
         this.pollutions.update((liste)=>liste.filter((p) => p.id !== pollution.id));
+        this.toastService.success(`« ${pollution.title} » a été supprimée.`);
       },
       error:()=>{
-        this.deleteError.set(`La suppression de « ${pollution.title} » a échoué. Réessayez plus tard.`);
+        this.toastService.error(`La suppression de « ${pollution.title} » a échoué. Réessayez plus tard.`);
       }
     });
   }

@@ -1,0 +1,7 @@
+<app-login-form [submitting]="submitting()" (credentialsSubmitted)="logIn($event)" />
+
+@if (error(); as message) {
+  <p class="api-error" role="alert">{{ message }}</p>
+}
+
+<p class="switch">Pas encore de compte ? <a routerLink="/signup">S'inscrire</a></p>

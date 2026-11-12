@@ -8,10 +8,6 @@
     [initialValue]="toEdit"
     (pollutionSubmitted)="save($event)"
   />
-
-  @if (saveError(); as message) {
-    <p class="api-error" role="alert">{{ message }}</p>
-  }
 } @else if (error(); as message) {
   <p class="api-error" role="alert">{{ message }}</p>
 } @else {

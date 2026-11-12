@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, inject } from '@angular/core';
 import { User } from '../models/user';
 
 @Component({
@@ -14,6 +14,8 @@ export class UserProfile {
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
 
   @Input({ required: true }) user!: User;
+  // Handled by the parent: it forgets the user and goes back to the login page
+  @Output() logout = new EventEmitter<void>();
 
   // Opened on click rather than on hover: hover exists neither on mobile nor with the keyboard
   open = false;

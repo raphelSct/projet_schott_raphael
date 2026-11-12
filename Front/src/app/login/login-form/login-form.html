@@ -1,0 +1,27 @@
+<h1>Connexion</h1>
+
+@let controls = form.controls;
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="field">
+    <label for="username">Login</label>
+    <input id="username" type="text" formControlName="username" autocomplete="username" />
+    @if (controls.username.invalid && controls.username.touched) {
+      <span class="error">Le login est requis.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="password">Mot de passe</label>
+    <input id="password" type="password" formControlName="password" autocomplete="current-password" />
+    @if (controls.password.invalid && controls.password.touched) {
+      <span class="error">Le mot de passe est requis.</span>
+    }
+  </div>
+
+  <div class="actions">
+    <button type="submit" [disabled]="submitting">
+      {{ submitting ? 'Connexion en cours…' : 'Se connecter' }}
+    </button>
+  </div>
+</form>
