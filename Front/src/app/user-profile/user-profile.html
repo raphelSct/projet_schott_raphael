@@ -1,7 +1,7 @@
 <button
   type="button"
   class="avatar"
-  [attr.aria-expanded]="open"
+  [attr.aria-expanded]="open()"
   aria-controls="user-profile-panel"
   [attr.aria-label]="'Profil de ' + user.firstName + ' ' + user.lastName"
   (click)="toggle()"
@@ -9,7 +9,7 @@
   {{ initials }}
 </button>
 
-@if (open) {
+@if (open()) {
   <div id="user-profile-panel" class="panel">
     <p class="name">{{ user.firstName }} {{ user.lastName }}</p>
     <dl>

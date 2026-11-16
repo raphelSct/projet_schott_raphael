@@ -1,6 +1,7 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal, viewChild } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
+import { HasUnsavedChanges } from '../../guards/unsaved-changes.guard';
 import { NewPollution, Pollution } from '../../models/pollution';
 import { PollutionForm } from '../../pollution-report/pollution-form/pollution-form';
 import { PollutionService } from '../../services/pollution.service';
@@ -11,8 +12,9 @@ import { ToastService } from '../../services/toast.service';
   imports: [PollutionForm, RouterLink],
   templateUrl: './pollution-edit.html',
   styleUrl: './pollution-edit.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PollutionEdit implements OnInit {
+export class PollutionEdit implements OnInit, HasUnsavedChanges {
   // Id read from the URL (/pollutions/:id/edit) thanks to withComponentInputBinding()
   @Input() id!: string;
 
@@ -24,6 +26,15 @@ export class PollutionEdit implements OnInit {
   readonly pollution = signal<Pollution | null>(null);
   // Loading error: replaces the form
   readonly error = signal<string | null>(null);
+
+  private readonly form = viewChild(PollutionForm);
+  // Set once the changes are saved: the form is still "dirty" when the page is left for the detail page
+  private saved = false;
+
+  // Used by unsavedChangesGuard before leaving the page
+  hasUnsavedChanges(): boolean {
+    return !this.saved && (this.form()?.form.dirty ?? false);
+  }
 
   ngOnInit(): void {
     this.pollutionService.getOne(this.id).subscribe({
@@ -41,6 +52,7 @@ export class PollutionEdit implements OnInit {
     this.pollutionService.update(updated,this.id).subscribe({
       next:()=>{
         this.toastService.success('Les modifications ont été enregistrées.');
+        this.saved = true;
         // Back to the detail page, which shows the saved values
         this.router.navigate(['/pollutions', this.id]);
       },

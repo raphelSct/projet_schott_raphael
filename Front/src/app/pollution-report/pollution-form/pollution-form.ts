@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -35,6 +35,7 @@ function integer(control: AbstractControl<number | null>): ValidationErrors | nu
   imports: [PollutionTypeLabelPipe, ReactiveFormsModule],
   templateUrl: './pollution-form.html',
   styleUrl: './pollution-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionForm implements OnInit {
 

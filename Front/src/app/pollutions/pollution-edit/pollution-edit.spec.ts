@@ -40,6 +40,48 @@ async function submit(fixture: ComponentFixture<PollutionEdit>, values: NewPollu
 }
 
 describe('PollutionEdit', () => {
+  describe('unsaved changes', () => {
+    // Types in a field of the real form, like the user does
+    async function type(fixture: ComponentFixture<PollutionEdit>, value: string): Promise<void> {
+      const input = (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('#title')!;
+      input.value = value;
+      input.dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+    }
+
+    it('has none right after the form is prefilled', async () => {
+      const fixture = await showEdit({ getOne: () => of(pollution) });
+
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
+    });
+
+    it('has some once the user has changed the form', async () => {
+      const fixture = await showEdit({ getOne: () => of(pollution) });
+
+      await type(fixture, 'Nouveau titre');
+
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(true);
+    });
+
+    it('has none once the changes are saved, so that going back to the detail page is not blocked', async () => {
+      const fixture = await showEdit({ getOne: () => of(pollution), update: () => of(pollution) });
+      await type(fixture, 'Nouveau titre');
+
+      await submit(fixture, { ...pollution, title: 'Nouveau titre' });
+
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
+    });
+
+    it('still has some when saving fails', async () => {
+      const fixture = await showEdit({ getOne: () => of(pollution), update: () => throwError(() => new Error('API unavailable')) });
+      await type(fixture, 'Nouveau titre');
+
+      await submit(fixture, { ...pollution, title: 'Nouveau titre' });
+
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(true);
+    });
+  });
+
   it('shows the loading message while the pollution is unknown', async () => {
     const fixture = await showEdit({ getOne: () => NEVER });
 

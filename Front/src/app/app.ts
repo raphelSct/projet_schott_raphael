@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 import { UserService } from './services/user.service';
@@ -9,6 +9,7 @@ import { UserProfile } from './user-profile/user-profile';
   imports: [ConfirmDialog, RouterLink, RouterLinkActive, RouterOutlet, ToastContainer, UserProfile],
   selector: 'app-root',
   styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',
 })
 export class App {
