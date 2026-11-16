@@ -1,12 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
+import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
 import { NewPollution } from '../../models/pollution';
+import { PollutionLevelPipe } from '../../pipes/pollution-level.pipe';
 import { PollutionTypeLabelPipe } from '../../pipes/pollution-type-label.pipe';
 
 // Full display of a pollution: report summary and detail page
 @Component({
   selector: 'app-pollution-info',
-  imports: [DatePipe, DecimalPipe, PollutionTypeLabelPipe],
+  imports: [DatePipe, DecimalPipe, HighlightPollutionDirective, PollutionLevelPipe, PollutionTypeLabelPipe],
   templateUrl: './pollution-info.html',
   styleUrl: './pollution-info.scss',
 })

@@ -11,6 +11,7 @@ import { PollutionReport } from './pollution-report';
 const newPollution: NewPollution = {
   title: 'Décharge sauvage',
   type: 'illegal-dumping',
+  severityIndex: 72,
   description: 'Sacs poubelle sur la berge',
   observationDate: '2026-10-01',
   location: 'Paris',

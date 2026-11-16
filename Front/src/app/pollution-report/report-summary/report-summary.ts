@@ -15,6 +15,7 @@ export class ReportSummary {
     id: '',
     title: '',
     type: 'other',
+    severityIndex: 0,
     description: '',
     observationDate: '',
     location: '',

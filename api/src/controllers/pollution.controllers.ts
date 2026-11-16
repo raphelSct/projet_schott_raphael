@@ -11,6 +11,7 @@ function pollutionFields(body: Record<string, unknown> = {}): PollutionCreationA
   return {
     title: body.title,
     type: body.type,
+    severityIndex: body.severityIndex,
     description: body.description,
     observationDate: body.observationDate,
     location: body.location,

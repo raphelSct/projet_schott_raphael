@@ -12,6 +12,7 @@ const pollutions: Pollution[] = [
     id: '1',
     title: 'Décharge sauvage',
     type: 'illegal-dumping',
+    severityIndex: 72,
     description: 'Sacs poubelle sur la berge',
     observationDate: '2026-10-01',
     location: 'Paris',
@@ -22,6 +23,7 @@ const pollutions: Pollution[] = [
     id: '2',
     title: 'Mousse sur le canal',
     type: 'water',
+    severityIndex: 30,
     description: 'Mousse blanchâtre',
     observationDate: '2026-09-22',
     location: 'Paris',
@@ -32,6 +34,7 @@ const pollutions: Pollution[] = [
     id: '3',
     title: 'Bouteilles sur la plage',
     type: 'plastic',
+    severityIndex: 5,
     description: 'Emballages ramenés par la marée',
     observationDate: '2026-08-14',
     location: 'Marseille',
@@ -68,6 +71,23 @@ describe('PollutionList', () => {
     expect(titles(element)).toEqual(['Décharge sauvage', 'Mousse sur le canal', 'Bouteilles sur la plage']);
     expect(element.querySelector('.pollution .badge')?.textContent).toBe('Dépôt sauvage');
     expect(element.querySelector('.count')?.textContent).toContain('3 pollutions');
+  });
+
+  it('shows the level of each pollution, with its color', async () => {
+    const element = (await showList({ getAll: () => of(pollutions) })).nativeElement as HTMLElement;
+    const levels = [...element.querySelectorAll<HTMLElement>('.pollution .level')];
+
+    expect(levels.map((level) => level.textContent?.trim())).toEqual([
+      'Niveau : Élevée',
+      'Niveau : Modérée',
+      'Niveau : Faible',
+    ]);
+    expect(levels.map((level) => level.style.backgroundColor)).toEqual([
+      'var(--level-high)',
+      'var(--level-moderate)',
+      'var(--level-low)',
+    ]);
+    expect(levels[0].title).toBe('Indice de dangerosité : 72');
   });
 
   it('shows a message when the API fails', async () => {

@@ -25,6 +25,31 @@
   </div>
 
   <div class="field">
+    <label for="severityIndex">Indice de dangerosité</label>
+    <input
+      id="severityIndex"
+      type="number"
+      step="1"
+      inputmode="numeric"
+      formControlName="severityIndex"
+      placeholder="45"
+      aria-describedby="severityIndex-hint"
+    />
+    <span id="severityIndex-hint" class="hint">
+      0 à 20 : faible · 21 à 50 : modérée · 51 à 100 : élevée · 101 et plus : dangereuse
+    </span>
+    @if (controls.severityIndex.touched) {
+      @if (controls.severityIndex.hasError('required')) {
+        <span class="error">L'indice de dangerosité est requis (nombre entier).</span>
+      } @else if (controls.severityIndex.hasError('integer')) {
+        <span class="error">L'indice de dangerosité doit être un nombre entier.</span>
+      } @else if (controls.severityIndex.hasError('min') || controls.severityIndex.hasError('max')) {
+        <span class="error">L'indice de dangerosité doit être compris entre 0 et {{ maxSeverityIndex }}.</span>
+      }
+    }
+  </div>
+
+  <div class="field">
     <label for="description">Description</label>
     <textarea id="description" rows="4" formControlName="description"></textarea>
     @if (controls.description.invalid && controls.description.touched) {

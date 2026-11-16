@@ -108,8 +108,18 @@
     padding: 1rem 1rem 0.5rem;
   }
 
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
   .badge {
     @include mixins.badge;
+  }
+
+  .level {
+    @include mixins.level-badge;
   }
 
   h2 {

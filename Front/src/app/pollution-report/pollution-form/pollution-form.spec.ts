@@ -5,6 +5,7 @@ import { PollutionForm } from './pollution-form';
 const pollution: NewPollution = {
   title: 'Décharge sauvage',
   type: 'illegal-dumping',
+  severityIndex: 72,
   description: 'Sacs poubelle sur la berge',
   observationDate: '2026-10-01',
   location: 'Paris',
@@ -49,6 +50,43 @@ describe('PollutionForm', () => {
     await fixture.whenStable();
 
     expect(component.form.getRawValue()).toEqual({ ...pollution, photoUrl: '' });
+  });
+
+  describe('severity index', () => {
+    // Errors of the severity index control once it holds the given value
+    async function errorsFor(value: number | null) {
+      await fixture.whenStable();
+      const control = component.form.controls.severityIndex;
+      control.setValue(value);
+      return control.errors;
+    }
+
+    it('is required', async () => {
+      expect(await errorsFor(null)).toEqual({ required: true });
+    });
+
+    it('accepts whole numbers from 0 to the maximum', async () => {
+      expect(await errorsFor(0)).toBeNull();
+      expect(await errorsFor(72)).toBeNull();
+      expect(await errorsFor(component.maxSeverityIndex)).toBeNull();
+    });
+
+    it('refuses a negative number, a decimal and a number above the maximum', async () => {
+      expect(await errorsFor(-1)).toHaveProperty('min');
+      expect(await errorsFor(72.5)).toEqual({ integer: true });
+      expect(await errorsFor(component.maxSeverityIndex + 1)).toHaveProperty('max');
+    });
+
+    it('shows the error under the field once it has been touched', async () => {
+      await fixture.whenStable();
+      const input = (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('#severityIndex')!;
+      input.value = '-5';
+      input.dispatchEvent(new Event('input'));
+      input.dispatchEvent(new Event('blur'));
+      await fixture.whenStable();
+
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain('compris entre 0 et 1000');
+    });
   });
 
   it('shows the French label of each pollution type', async () => {

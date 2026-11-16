@@ -46,9 +46,10 @@ function describeError(err: unknown): string {
   return String(err);
 }
 
-// Tables are created by the scripts in api/sql/, not by the API: each model is paired with its script
-const tables: { model: ModelStatic<Model>; script: string }[] = [
-  { model: db.pollutions, script: "create-table-pollution.sql" },
+// Tables are created by the scripts in api/sql/, not by the API: each model is paired with its script.
+// "upgradeScript" adds the new columns to an existing table, whereas "script" drops the table and its rows.
+const tables: { model: ModelStatic<Model>; script: string; upgradeScript?: string }[] = [
+  { model: db.pollutions, script: "create-table-pollution.sql", upgradeScript: "add-severity-index-to-pollution.sql" },
   { model: db.users, script: "create-table-users.sql" }
 ];
 
@@ -74,12 +75,13 @@ async function start(): Promise<void> {
     process.exit(1);
   }
 
-  for (const { model, script } of tables) {
+  for (const { model, script, upgradeScript } of tables) {
     try {
       await checkTable(model);
     } catch (err: unknown) {
+      const keepRows = upgradeScript ? `, or api/sql/${upgradeScript} to keep the existing rows` : "";
       console.error(
-        `The "${model.tableName}" table is not ready (${describeError(err)}): run api/sql/${script} in pgAdmin.`
+        `The "${model.tableName}" table is not ready (${describeError(err)}): run api/sql/${script} in pgAdmin${keepRows}.`
       );
       process.exit(1);
     }

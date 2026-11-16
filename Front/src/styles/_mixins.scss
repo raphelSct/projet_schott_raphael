@@ -125,6 +125,16 @@
   font-weight: 600;
 }
 
+// Rounded tag showing the pollution level: its background is set by HighlightPollutionDirective
+@mixin level-badge {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  color: var(--black);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 // Error returned by the API
 @mixin error-message {
   margin: 1rem 0 0;

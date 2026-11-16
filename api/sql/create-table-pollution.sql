@@ -13,6 +13,8 @@ CREATE TABLE pollution (
   -- Codes shared with the front, which shows their French labels
   type             VARCHAR(30)      NOT NULL
                    CHECK (type IN ('plastic', 'chemical', 'illegal-dumping', 'water', 'air', 'other')),
+  -- Whole number; the front turns it into a level: 0-20 low, 21-50 moderate, 51-100 high, 101+ dangerous
+  severity_index   INTEGER          NOT NULL CHECK (severity_index BETWEEN 0 AND 1000),
   description      TEXT             NOT NULL CHECK (btrim(description) <> ''),
   observation_date DATE             NOT NULL,
   location         VARCHAR(255)     NOT NULL CHECK (btrim(location) <> ''),
@@ -22,20 +24,20 @@ CREATE TABLE pollution (
   photo_url        TEXT             CHECK (photo_url ~ '^https?://\S+$')
 );
 
--- Demo data: the same pollutions as the front's mock API (front/public/mock-api/pollutions.json)
-INSERT INTO pollution (title, type, description, observation_date, location, latitude, longitude, photo_url) VALUES
-  ('Décharge sauvage au bord de la Seine', 'illegal-dumping',
+-- Demo data: one pollution at least per level (low, moderate, high, dangerous)
+INSERT INTO pollution (title, type, severity_index, description, observation_date, location, latitude, longitude, photo_url) VALUES
+  ('Décharge sauvage au bord de la Seine', 'illegal-dumping', 65,
    E'Une vingtaine de sacs poubelle et des gravats abandonnés sur la berge.\nRisque de chute dans l''eau en cas de crue.',
    '2026-10-01', 'Quai de la Rapée, Paris 12e', 48.8443, 2.3706, 'https://picsum.photos/id/1043/800/450'),
-  ('Mousse suspecte sur le canal', 'water',
+  ('Mousse suspecte sur le canal', 'water', 30,
    'Mousse blanchâtre à la surface de l''eau sur une cinquantaine de mètres, avec une odeur de lessive.',
    '2026-09-22', 'Canal Saint-Martin, Paris 10e', 48.8721, 2.3658, NULL),
-  ('Bouteilles plastiques sur la plage', 'plastic',
+  ('Bouteilles plastiques sur la plage', 'plastic', 15,
    'Nombreuses bouteilles et emballages plastiques ramenés par la marée, surtout près des rochers.',
    '2026-08-14', 'Plage du Prado, Marseille', 43.2593, 5.3756, 'https://picsum.photos/id/1015/800/450'),
-  ('Odeur de solvant près de la zone industrielle', 'chemical',
+  ('Odeur de solvant près de la zone industrielle', 'chemical', 120,
    'Forte odeur de solvant ressentie le matin, accompagnée de picotements aux yeux.',
    '2026-09-30', 'Zone industrielle, Saint-Fons', 45.7068, 4.853, NULL),
-  ('Fumées noires d''un brûlage de déchets', 'air',
+  ('Fumées noires d''un brûlage de déchets', 'air', 85,
    'Brûlage de déchets verts et de plastiques dans un jardin, fumée noire visible depuis la rue.',
    '2026-10-05', 'Chemin des Vignes, Bordeaux', 44.851, -0.58, NULL);
