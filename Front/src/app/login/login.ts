@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { Credentials } from '../models/user';
@@ -10,8 +10,12 @@ import { LoginForm } from './login-form/login-form';
   imports: [LoginForm, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login {
+  // Page the visitor asked for before being sent here (?returnUrl=…, see authGuard), read thanks to withComponentInputBinding()
+  @Input() returnUrl?: string;
+
   private readonly userService = inject(UserService);
   private readonly router = inject(Router);
 
@@ -27,8 +31,9 @@ export class Login {
       .login(credentials)
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
-        // The service keeps the logged-in user: the rest of the application is now available
-        next: () => this.router.navigate(['/pollutions']),
+        // The service keeps the logged-in user: the rest of the application is now available.
+        // The router only navigates inside the application, so an odd returnUrl cannot lead anywhere else.
+        next: () => this.router.navigateByUrl(this.returnUrl || '/pollutions'),
         error: (error: Error) => this.error.set(error.message),
       });
   }

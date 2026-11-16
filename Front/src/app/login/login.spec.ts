@@ -10,15 +10,19 @@ import { LoginForm } from './login-form/login-form';
 const alice: User = { id: 'abc', username: 'adupont', lastName: 'Dupont', firstName: 'Alice', email: 'alice.dupont@example.com' };
 
 // Simulates a valid submission of the child form, then waits for the rendering
-async function submit(response: Observable<User>): Promise<HTMLElement> {
+async function submit(response: Observable<User>, returnUrl?: string): Promise<HTMLElement> {
   TestBed.configureTestingModule({
     imports: [Login],
     providers: [
-      provideRouter([{ path: 'pollutions', children: [] }]),
+      provideRouter([{ path: 'pollutions', children: [{ path: ':id', children: [] }] }]),
       { provide: UserService, useValue: { login: () => response } },
     ],
   });
   const fixture = TestBed.createComponent(Login);
+  // As the router does with the ?returnUrl=... query parameter (withComponentInputBinding)
+  if (returnUrl) {
+    fixture.componentRef.setInput('returnUrl', returnUrl);
+  }
   await fixture.whenStable();
 
   const form = fixture.debugElement.query(By.directive(LoginForm));
@@ -32,6 +36,12 @@ describe('Login', () => {
     await submit(of(alice));
 
     expect(TestBed.inject(Router).url).toBe('/pollutions');
+  });
+
+  it('goes back to the page the visitor asked for, when there is one', async () => {
+    await submit(of(alice), '/pollutions/42');
+
+    expect(TestBed.inject(Router).url).toBe('/pollutions/42');
   });
 
   it('keeps the form and shows the error when the credentials are wrong', async () => {

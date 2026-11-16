@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -22,6 +22,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   imports: [ReactiveFormsModule],
   templateUrl: './signup-form.html',
   styleUrl: './signup-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupForm {
   // Disables the button during the API call, handled by the parent component

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Pollution } from '../../models/pollution';
 import { PollutionInfo } from '../../pollutions/pollution-info/pollution-info';
@@ -7,6 +7,7 @@ import { PollutionInfo } from '../../pollutions/pollution-info/pollution-info';
   imports: [PollutionInfo, RouterLink],
   selector: 'app-report-summary',
   styleUrl: './report-summary.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './report-summary.html',
 })
 export class ReportSummary {

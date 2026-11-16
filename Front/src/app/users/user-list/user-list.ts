@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { User } from '../../models/user';
 import { ConfirmService } from '../../services/confirm.service';
@@ -9,6 +9,7 @@ import { UserService } from '../../services/user.service';
   selector: 'app-user-list',
   templateUrl: './user-list.html',
   styleUrl: './user-list.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserList implements OnInit {
   private readonly userService = inject(UserService);

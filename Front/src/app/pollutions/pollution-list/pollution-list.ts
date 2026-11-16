@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -22,6 +22,7 @@ function normalizeText(text: string): string {
   imports: [DatePipe, HighlightPollutionDirective, PollutionLevelPipe, PollutionTypeLabelPipe, ReactiveFormsModule, RouterLink],
   templateUrl: './pollution-list.html',
   styleUrl: './pollution-list.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionList implements OnInit {
   private readonly pollutionService = inject(PollutionService);

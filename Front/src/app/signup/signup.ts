@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { NewUser } from '../models/user';
@@ -11,6 +11,7 @@ import { SignupForm } from './signup-form/signup-form';
   imports: [RouterLink, SignupForm],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Signup {
   private readonly userService = inject(UserService);

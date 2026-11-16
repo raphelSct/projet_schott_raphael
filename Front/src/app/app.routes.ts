@@ -1,29 +1,34 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
-import { Login } from './login/login';
-import { PollutionReport } from './pollution-report/pollution-report';
-import { PollutionDetail } from './pollutions/pollution-detail/pollution-detail';
-import { PollutionEdit } from './pollutions/pollution-edit/pollution-edit';
-import { PollutionList } from './pollutions/pollution-list/pollution-list';
-import { Signup } from './signup/signup';
-import { UserList } from './users/user-list/user-list';
+import { guestGuard } from './guards/guest.guard';
 
+// Every page is lazy loaded: its code is only downloaded when the user first opens it
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'pollutions' },
-  { path: 'login', component: Login, title: 'Connexion' },
-  { path: 'signup', component: Signup, title: 'Inscription' },
+  // Visitors only: a logged-in user is sent to the application (guestGuard)
   {
-    // All these pages require the user to be logged in
-    path: '',
-    canActivate: [authGuard],
-    children: [
-      { path: 'pollutions', component: PollutionList, title: 'Pollutions déclarées' },
-      // Declared before 'pollutions/:id', otherwise "new" would be read as an id
-      { path: 'pollutions/new', component: PollutionReport, title: 'Déclarer une pollution' },
-      { path: 'pollutions/:id', component: PollutionDetail, title: "Détail d'une pollution" },
-      { path: 'pollutions/:id/edit', component: PollutionEdit, title: 'Modifier une pollution' },
-      { path: 'users', component: UserList, title: 'Utilisateurs inscrits' },
-    ],
+    path: 'login',
+    canMatch: [guestGuard],
+    loadComponent: () => import('./login/login').then((m) => m.Login),
+    title: 'Connexion',
+  },
+  {
+    path: 'signup',
+    canMatch: [guestGuard],
+    loadComponent: () => import('./signup/signup').then((m) => m.Signup),
+    title: 'Inscription',
+  },
+  // Logged-in users only: canMatch (authGuard) also keeps the code of these pages from being downloaded otherwise
+  {
+    path: 'pollutions',
+    canMatch: [authGuard],
+    loadChildren: () => import('./pollutions/pollutions.routes').then((m) => m.POLLUTION_ROUTES),
+  },
+  {
+    path: 'users',
+    canMatch: [authGuard],
+    loadComponent: () => import('./users/user-list/user-list').then((m) => m.UserList),
+    title: 'Utilisateurs inscrits',
   },
   { path: '**', redirectTo: 'pollutions' },
 ];

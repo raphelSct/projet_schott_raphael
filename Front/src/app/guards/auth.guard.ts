@@ -1,9 +1,19 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanMatchFn, Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 
-// The rest of the application is only available once the user has logged in or signed up
-export const authGuard: CanActivateFn = () => {
-  const user = inject(UserService).user();
-  return user ? true : inject(Router).createUrlTree(['/login']);
+// Pages reserved for logged-in users.
+// A guard on "canMatch" (rather than "canActivate") runs before the lazy-loaded code of the page is downloaded:
+// a visitor who is not logged in never gets it.
+// The page asked for is kept in "returnUrl", so that the login page can send the user back to it.
+export const authGuard: CanMatchFn = () => {
+  if (inject(UserService).user()) {
+    return true;
+  }
+
+  const router = inject(Router);
+  const target = router.currentNavigation()?.extractedUrl;
+  const returnUrl = target ? router.serializeUrl(target) : '/';
+  // The home page needs no memory: it is where the user lands anyway
+  return router.createUrlTree(['/login'], { queryParams: returnUrl === '/' ? {} : { returnUrl } });
 };

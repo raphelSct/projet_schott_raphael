@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { Pollution } from '../../models/pollution';
@@ -12,6 +12,7 @@ import { ToastService } from '../../services/toast.service';
   imports: [PollutionInfo, RouterLink],
   templateUrl: './pollution-detail.html',
   styleUrl: './pollution-detail.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionDetail implements OnInit {
   // Id read from the URL (/pollutions/:id) thanks to withComponentInputBinding()

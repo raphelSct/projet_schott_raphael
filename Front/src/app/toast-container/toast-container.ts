@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ToastService } from '../services/toast.service';
 
 // Notifications shown by ToastService, stacked at the bottom of the screen
@@ -6,6 +6,7 @@ import { ToastService } from '../services/toast.service';
   selector: 'app-toast-container',
   templateUrl: './toast-container.html',
   styleUrl: './toast-container.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastContainer {
   readonly toastService = inject(ToastService);

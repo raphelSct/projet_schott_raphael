@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
 import { NewPollution } from '../../models/pollution';
@@ -11,12 +11,13 @@ import { PollutionTypeLabelPipe } from '../../pipes/pollution-type-label.pipe';
   imports: [DatePipe, DecimalPipe, HighlightPollutionDirective, PollutionLevelPipe, PollutionTypeLabelPipe],
   templateUrl: './pollution-info.html',
   styleUrl: './pollution-info.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionInfo {
   @Input({ required: true }) pollution!: NewPollution;
 
   // Set to true when the given URL does not point to a loadable image
-  photoUnavailable = false;
+  readonly photoUnavailable = signal(false);
 
   get mapUrl(): string {
     const { latitude, longitude } = this.pollution;
