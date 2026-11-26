@@ -1,6 +1,6 @@
 <header class="site-header">
   <div class="header-content">
-    @if (user(); as currentUser) {
+    @if (isAuthenticated()) {
       <nav class="nav">
         <!-- exact: the list must not stay highlighted on /pollutions/new -->
         <a
@@ -12,7 +12,12 @@
         <a routerLink="/pollutions/new" routerLinkActive="active" ariaCurrentWhenActive="page">Déclarer une pollution</a>
         <a routerLink="/users" routerLinkActive="active" ariaCurrentWhenActive="page">Utilisateurs</a>
       </nav>
-      <app-user-profile [user]="currentUser" (logout)="logout()" />
+      <div class="session">
+        <span class="username">{{ username() }}</span>
+        @if (user(); as currentUser) {
+          <app-user-profile [user]="currentUser" (logout)="logout()" />
+        }
+      </div>
     } @else {
       <nav class="nav">
         <a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Connexion</a>

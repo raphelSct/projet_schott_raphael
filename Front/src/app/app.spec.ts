@@ -1,5 +1,5 @@
-import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Store, provideStore } from '@ngxs/store';
 import { provideHttpClient } from '@angular/common/http';
 import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
 import { of } from 'rxjs';
@@ -11,31 +11,26 @@ import { User } from './models/user';
 import { Pollution } from './models/pollution';
 import { PollutionService } from './services/pollution.service';
 import { UserService } from './services/user.service';
+import { Login } from './store/auth.actions';
+import { AuthState } from './store/auth.state';
 
 const alice: User = { id: '1', username: 'adupont', lastName: 'Dupont', firstName: 'Alice', email: 'alice.dupont@example.com' };
 
 // Creates the application with a logged-in user (or none), then opens the home page
 async function openHome(user: User | null, url = '/'): Promise<ComponentFixture<App>> {
-  const currentUser = signal(user);
   TestBed.configureTestingModule({
     imports: [App],
     providers: [
       provideRouter(routes, withComponentInputBinding()),
       provideHttpClient(),
-      {
-        provide: UserService,
-        useValue: {
-          user: currentUser,
-          login: () => {
-            currentUser.set(alice);
-            return of(alice);
-          },
-          logout: () => currentUser.set(null),
-        },
-      },
+      provideStore([AuthState]),
+      { provide: UserService, useValue: { login: () => of(alice) } },
       { provide: PollutionService, useValue: { getAll: () => of([]), getOne: () => of(pollution) } },
     ],
   });
+  if (user) {
+    TestBed.inject(Store).dispatch(new Login({ email: user.email, name: `${user.firstName} ${user.lastName}` }));
+  }
   const fixture = TestBed.createComponent(App);
   await TestBed.inject(Router).navigateByUrl(url);
   await fixture.whenStable();
@@ -96,6 +91,7 @@ describe('App', () => {
     expect(compiled.querySelector('h1')?.textContent).toContain('Pollutions déclarées');
     expect(compiled.querySelector('nav a[href="/users"]')).toBeTruthy();
     expect(compiled.querySelector('app-user-profile button')?.textContent).toContain('AD');
+    expect(compiled.querySelector('.session .username')?.textContent).toBe('Alice Dupont');
   });
 
   it('goes back to the login page after logging out', async () => {
@@ -108,6 +104,7 @@ describe('App', () => {
     await fixture.whenStable();
 
     expect(TestBed.inject(Router).url).toBe('/login');
+    expect(TestBed.inject(Store).selectSnapshot(AuthState.isAuthenticated)).toBe(false);
     expect(compiled.querySelector('app-user-profile')).toBeNull();
   });
 });

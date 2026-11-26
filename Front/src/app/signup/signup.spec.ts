@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
+import { Store, provideStore } from '@ngxs/store';
 import { Observable, of, throwError } from 'rxjs';
 import { NewUser, User } from '../models/user';
 import { UserService } from '../services/user.service';
+import { AuthState } from '../store/auth.state';
 import { Signup } from './signup';
 import { SignupForm } from './signup-form/signup-form';
 
@@ -22,6 +24,7 @@ async function submit(response: Observable<User>): Promise<HTMLElement> {
     providers: [
       provideRouter([{ path: 'pollutions', children: [] }]),
       { provide: UserService, useValue: { signUp: () => response } },
+      provideStore([AuthState]),
     ],
   });
   const fixture = TestBed.createComponent(Signup);
@@ -34,10 +37,11 @@ async function submit(response: Observable<User>): Promise<HTMLElement> {
 }
 
 describe('Signup', () => {
-  it('opens the pollution list once the signup succeeds', async () => {
+  it('logs the new user in and opens the pollution list once the signup succeeds', async () => {
     await submit(of({ id: 'abc', username: 'adupont', lastName: 'Dupont', firstName: 'Alice', email: 'alice.dupont@example.com' }));
 
     expect(TestBed.inject(Router).url).toBe('/pollutions');
+    expect(TestBed.inject(Store).selectSnapshot(AuthState.username)).toBe('Alice Dupont');
   });
 
   it('keeps the form and shows the error when the API fails', async () => {

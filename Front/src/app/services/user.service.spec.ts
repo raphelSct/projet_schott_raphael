@@ -38,7 +38,7 @@ describe('UserService', () => {
   }
 
   describe('signUp', () => {
-    it('sends the signup as a POST to the environment URL and keeps the signed-up user', () => {
+    it('sends the signup as a POST to the environment URL and returns the new user', () => {
       let result: User | undefined;
 
       service.signUp(newUser).subscribe((u) => (result = u));
@@ -48,7 +48,6 @@ describe('UserService', () => {
       expect(request.request.body).toEqual(newUser);
       request.flush(alice);
       expect(result).toEqual(alice);
-      expect(service.user()).toEqual(alice);
     });
 
     it('returns a readable message when the API cannot be reached', () => {
@@ -58,7 +57,6 @@ describe('UserService', () => {
 
       http.expectOne(url).error(new ProgressEvent('error'), { status: 0 });
       expect(message).toContain("Impossible de joindre l'API");
-      expect(service.user()).toBeNull();
     });
 
     it('reports a username or email already in use', () => {
@@ -70,15 +68,16 @@ describe('UserService', () => {
     });
   });
 
-  describe('login and logout', () => {
-    it('logs in with a POST of the credentials and keeps the user', () => {
-      service.login({ username: 'adupont', password: 'motdepasse' }).subscribe();
+  describe('login', () => {
+    it('logs in with a POST of the credentials and returns the user', () => {
+      let result: User | undefined;
+      service.login({ username: 'adupont', password: 'motdepasse' }).subscribe((u) => (result = u));
 
       const request = http.expectOne(`${url}/login`);
       expect(request.request.method).toBe('POST');
       expect(request.request.body).toEqual({ username: 'adupont', password: 'motdepasse' });
       request.flush(alice);
-      expect(service.user()).toEqual(alice);
+      expect(result).toEqual(alice);
     });
 
     it('reports wrong credentials', () => {
@@ -88,16 +87,6 @@ describe('UserService', () => {
       http.expectOne(`${url}/login`).flush(null, { status: 401, statusText: 'Unauthorized' });
 
       expect(message).toBe('Login ou mot de passe incorrect.');
-      expect(service.user()).toBeNull();
-    });
-
-    it('forgets the user on logout', () => {
-      service.login({ username: 'adupont', password: 'motdepasse' }).subscribe();
-      http.expectOne(`${url}/login`).flush(alice);
-
-      service.logout();
-
-      expect(service.user()).toBeNull();
     });
   });
 

@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { finalize } from 'rxjs';
 import { User } from '../../models/user';
 import { ConfirmService } from '../../services/confirm.service';
 import { ToastService } from '../../services/toast.service';
 import { UserService } from '../../services/user.service';
+import { AuthState } from '../../store/auth.state';
 
 @Component({
   selector: 'app-user-list',
@@ -17,7 +19,7 @@ export class UserList implements OnInit {
   private readonly toastService = inject(ToastService);
 
   // Logged-in user: their own account cannot be deleted from this page
-  readonly currentUser = this.userService.user;
+  readonly currentUser = inject(Store).selectSignal(AuthState.user);
 
   // Signals: the HTTP response arrives outside a template event (application without zone.js)
   readonly users = signal<User[]>([]);

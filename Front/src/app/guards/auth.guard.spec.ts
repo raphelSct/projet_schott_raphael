@@ -1,17 +1,18 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { User } from '../models/user';
-import { UserService } from '../services/user.service';
+import { Store, provideStore } from '@ngxs/store';
+import { Login } from '../store/auth.actions';
+import { AuthState } from '../store/auth.state';
 import { authGuard } from './auth.guard';
 
 @Component({ template: '' })
 class Page {}
 
-const alice: User = { id: '1', username: 'adupont', lastName: 'Dupont', firstName: 'Alice', email: 'alice.dupont@example.com' };
+const alice = { email: 'alice.dupont@example.com', name: 'Alice Dupont' };
 
 // Router with a protected area ("private"), a login page and the redirection of the home page, like the application
-function setup(user: User | null): Router {
+function setup(user: typeof alice | null): Router {
   TestBed.configureTestingModule({
     providers: [
       provideRouter([
@@ -26,9 +27,12 @@ function setup(user: User | null): Router {
           ],
         },
       ]),
-      { provide: UserService, useValue: { user: signal(user) } },
+      provideStore([AuthState]),
     ],
   });
+  if (user) {
+    TestBed.inject(Store).dispatch(new Login(user));
+  }
   return TestBed.inject(Router);
 }
 

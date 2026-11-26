@@ -1,21 +1,22 @@
-import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { User } from '../models/user';
+import { Store, provideStore } from '@ngxs/store';
 import { ConfirmService } from '../services/confirm.service';
-import { UserService } from '../services/user.service';
+import { Login } from '../store/auth.actions';
+import { AuthState } from '../store/auth.state';
 import { unsavedChangesGuard } from './unsaved-changes.guard';
 
-const alice: User = { id: '1', username: 'adupont', lastName: 'Dupont', firstName: 'Alice', email: 'alice.dupont@example.com' };
-
 // Runs the guard for a page that has (or not) unsaved changes; the user answers the dialog with "answer"
-function leave(options: { unsaved: boolean; user?: User | null; answer?: boolean }) {
+function leave(options: { unsaved: boolean; loggedIn?: boolean; answer?: boolean }) {
   const ask = vi.fn(() => Promise.resolve(options.answer ?? true));
   TestBed.configureTestingModule({
     providers: [
-      { provide: UserService, useValue: { user: signal(options.user === undefined ? alice : options.user) } },
+      provideStore([AuthState]),
       { provide: ConfirmService, useValue: { ask } },
     ],
   });
+  if (options.loggedIn ?? true) {
+    TestBed.inject(Store).dispatch(new Login({ email: 'alice.dupont@example.com', name: 'Alice Dupont' }));
+  }
   const page = { hasUnsavedChanges: () => options.unsaved };
   const result = TestBed.runInInjectionContext(() => unsavedChangesGuard(page, {} as never, {} as never, {} as never));
   return { result, ask };
@@ -43,7 +44,7 @@ describe('unsavedChangesGuard', () => {
   });
 
   it('does not ask anything once the user has logged out', () => {
-    const { result, ask } = leave({ unsaved: true, user: null });
+    const { result, ask } = leave({ unsaved: true, loggedIn: false });
 
     expect(result).toBe(true);
     expect(ask).not.toHaveBeenCalled();
