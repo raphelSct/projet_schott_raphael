@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Credentials } from '../../models/user';
 
@@ -7,6 +7,7 @@ import { Credentials } from '../../models/user';
   imports: [ReactiveFormsModule],
   templateUrl: './login-form.html',
   styleUrl: './login-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginForm {
   // Disables the button during the API call, handled by the parent component

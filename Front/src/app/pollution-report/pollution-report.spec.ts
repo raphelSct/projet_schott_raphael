@@ -34,7 +34,51 @@ async function report(response: Observable<Pollution>): Promise<ComponentFixture
   return fixture;
 }
 
+// Types in a field of the real form, like the user does
+function type(element: HTMLElement, selector: string, value: string): void {
+  const input = element.querySelector<HTMLInputElement>(selector)!;
+  input.value = value;
+  input.dispatchEvent(new Event('input'));
+}
+
 describe('PollutionReport', () => {
+  describe('unsaved changes', () => {
+    async function open(): Promise<ComponentFixture<PollutionReport>> {
+      TestBed.configureTestingModule({
+        imports: [PollutionReport],
+        providers: [provideRouter([]), { provide: PollutionService, useValue: { create: () => of({ ...newPollution, id: '42' }) } }],
+      });
+      const fixture = TestBed.createComponent(PollutionReport);
+      await fixture.whenStable();
+      return fixture;
+    }
+
+    it('has none while the user has not typed anything', async () => {
+      expect((await open()).componentInstance.hasUnsavedChanges()).toBe(false);
+    });
+
+    it('has some once the user has typed in the form', async () => {
+      const fixture = await open();
+
+      type(fixture.nativeElement, '#title', 'Décharge');
+      await fixture.whenStable();
+
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(true);
+    });
+
+    it('has none anymore once the pollution is saved', async () => {
+      const fixture = await open();
+      type(fixture.nativeElement, '#title', 'Décharge');
+      await fixture.whenStable();
+
+      const form = fixture.debugElement.query(By.directive(PollutionForm));
+      (form.componentInstance as PollutionForm).pollutionSubmitted.emit(newPollution);
+      await fixture.whenStable();
+
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
+    });
+  });
+
   it('shows the summary of the pollution saved by the API, with a link to edit it and a toast', async () => {
     const element = (await report(of({ ...newPollution, id: '42' }))).nativeElement as HTMLElement;
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, afterRenderEffect, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, afterRenderEffect, inject, viewChild } from '@angular/core';
 import { ConfirmService } from '../services/confirm.service';
 
 // Confirmation dialog shared by the whole application, driven by ConfirmService.
@@ -7,6 +7,7 @@ import { ConfirmService } from '../services/confirm.service';
   selector: 'app-confirm-dialog',
   templateUrl: './confirm-dialog.html',
   styleUrl: './confirm-dialog.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmDialog {
   readonly confirmService = inject(ConfirmService);

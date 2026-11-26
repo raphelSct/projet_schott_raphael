@@ -37,6 +37,22 @@ Les services encapsulent les appels HTTP :
 - `/pollutions` : liste filtrable, `/pollutions/new` : déclaration, `/pollutions/:id` : détail, `/pollutions/:id/edit` : modification ;
 - `/users` : utilisateurs inscrits, avec suppression (sauf son propre compte).
 
+## Navigation : guards et chargement à la demande
+
+Chaque page est chargée à la demande (`loadComponent` et `loadChildren` dans `src/app/app.routes.ts` et `src/app/pollutions/pollutions.routes.ts`) : son code n'est téléchargé qu'à la première visite. Le bundle initial est passé d'environ 396 ko à 302 ko.
+
+| Guard (`src/app/guards/`) | Type | Rôle |
+|---|---|---|
+| `authGuard` | `canMatch` | réserve `/pollutions` et `/users` aux utilisateurs connectés. Un visiteur est envoyé sur `/login?returnUrl=…` : la page demandée est mémorisée et la connexion y ramène. `canMatch` plutôt que `canActivate`, pour que le code de la page ne soit même pas téléchargé |
+| `guestGuard` | `canMatch` | renvoie sur `/pollutions` un utilisateur déjà connecté qui arrive sur `/login` ou `/signup` (bouton Précédent du navigateur, par exemple) |
+| `unsavedChangesGuard` | `canDeactivate` | demande confirmation (fenêtre de confirmation de l'application) avant de quitter `/pollutions/new` ou `/pollutions/:id/edit` avec des modifications non enregistrées. Rien n'est demandé après un enregistrement réussi ni après une déconnexion |
+
+Une adresse inconnue redirige vers `/pollutions` (puis vers la connexion si besoin).
+
+## Détection des changements
+
+Tous les composants déclarent `changeDetection: ChangeDetectionStrategy.OnPush` : Angular ne les revérifie que si un de leurs `@Input` change, si un événement de leur template se produit ou si un signal lu par leur template change. C'est aussi le comportement par défaut d'Angular 22, ici rendu explicite. En contrepartie, l'état affiché doit être dans un signal ou un `@Input`, jamais dans un champ ordinaire modifié après une réponse HTTP ou un minuteur.
+
 ## Conventions
 
 - Le code est en anglais : fichiers, classes, variables, classes CSS, URLs, commentaires et tests.

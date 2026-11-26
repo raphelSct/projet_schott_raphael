@@ -1,12 +1,12 @@
 <h1>{{ pollution.title }}</h1>
 
 @if (pollution.photoUrl) {
-  @if (!photoUnavailable) {
+  @if (!photoUnavailable()) {
     <img
       class="photo"
       [src]="pollution.photoUrl"
       [alt]="'Photo de la pollution : ' + pollution.title"
-      (error)="photoUnavailable = true"
+      (error)="photoUnavailable.set(true)"
     />
   } @else {
     <p class="photo-unavailable">
