@@ -4,6 +4,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
 import { of } from 'rxjs';
 import { App } from './app';
+import { AddFavorite } from './core/states/favorites/favorites.actions';
+import { FavoritesState } from './core/states/favorites/favorites.state';
 import { LoginForm } from './login/login-form/login-form';
 import { By } from '@angular/platform-browser';
 import { routes } from './app.routes';
@@ -23,7 +25,7 @@ async function openHome(user: User | null, url = '/'): Promise<ComponentFixture<
     providers: [
       provideRouter(routes, withComponentInputBinding()),
       provideHttpClient(),
-      provideStore([AuthState]),
+      provideStore([AuthState, FavoritesState]),
       { provide: UserService, useValue: { login: () => of(alice) } },
       { provide: PollutionService, useValue: { getAll: () => of([]), getOne: () => of(pollution) } },
     ],
@@ -92,6 +94,24 @@ describe('App', () => {
     expect(compiled.querySelector('nav a[href="/users"]')).toBeTruthy();
     expect(compiled.querySelector('app-user-profile button')?.textContent).toContain('AD');
     expect(compiled.querySelector('.session .username')?.textContent).toBe('Alice Dupont');
+  });
+
+  it('shows the number of favorites next to the "Favoris" link, as it changes', async () => {
+    const fixture = await openHome(alice);
+    const badge = () => (fixture.nativeElement as HTMLElement).querySelector('nav a[href="/favorites"] .count')?.textContent;
+    expect(badge()).toBe('0');
+
+    TestBed.inject(Store).dispatch(new AddFavorite(pollution));
+    await fixture.whenStable();
+
+    expect(badge()).toBe('1');
+  });
+
+  it('opens the favorites page, also at the address given in the exercise', async () => {
+    const fixture = await openHome(alice, '/favoris');
+
+    expect(TestBed.inject(Router).url).toBe('/favorites');
+    expect((fixture.nativeElement as HTMLElement).querySelector('h1')?.textContent).toBe('Mes Favoris');
   });
 
   it('goes back to the login page after logging out', async () => {

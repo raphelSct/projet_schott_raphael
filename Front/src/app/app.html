@@ -10,6 +10,9 @@
           ariaCurrentWhenActive="page"
         >Pollutions</a>
         <a routerLink="/pollutions/new" routerLinkActive="active" ariaCurrentWhenActive="page">Déclarer une pollution</a>
+        <a routerLink="/favorites" routerLinkActive="active" ariaCurrentWhenActive="page">
+          Favoris <span class="count">{{ countFavorites() }}</span>
+        </a>
         <a routerLink="/users" routerLinkActive="active" ariaCurrentWhenActive="page">Utilisateurs</a>
       </nav>
       <div class="session">

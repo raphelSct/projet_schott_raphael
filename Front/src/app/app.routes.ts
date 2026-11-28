@@ -25,6 +25,14 @@ export const routes: Routes = [
     loadChildren: () => import('./pollutions/pollutions.routes').then((m) => m.POLLUTION_ROUTES),
   },
   {
+    path: 'favorites',
+    canMatch: [authGuard],
+    loadComponent: () => import('./favorites/favorite-list/favorite-list').then((m) => m.FavoriteList),
+    title: 'Mes Favoris',
+  },
+  // Address given in the exercise
+  { path: 'favoris', redirectTo: 'favorites' },
+  {
     path: 'users',
     canMatch: [authGuard],
     loadComponent: () => import('./users/user-list/user-list').then((m) => m.UserList),

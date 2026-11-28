@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { RemoveFavorite } from '../../core/states/favorites/favorites.actions';
+import { FavoriteButton } from '../../favorites/favorite-button/favorite-button';
 import { Pollution } from '../../models/pollution';
 import { PollutionInfo } from '../pollution-info/pollution-info';
 import { ConfirmService } from '../../services/confirm.service';
@@ -9,7 +12,7 @@ import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-pollution-detail',
-  imports: [PollutionInfo, RouterLink],
+  imports: [FavoriteButton, PollutionInfo, RouterLink],
   templateUrl: './pollution-detail.html',
   styleUrl: './pollution-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +25,7 @@ export class PollutionDetail implements OnInit {
   private readonly confirmService = inject(ConfirmService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
+  private readonly store = inject(Store);
 
   readonly pollution = signal<Pollution | null>(null);
   // Loading error: replaces the page content
@@ -54,6 +58,8 @@ export class PollutionDetail implements OnInit {
 
     this.pollutionService.delete(pollution.id).subscribe({
       next:()=>{
+        // A deleted pollution cannot stay a favorite
+        this.store.dispatch(new RemoveFavorite(pollution.id));
         this.toastService.success(`« ${pollution.title} » a été supprimée.`);
         this.router.navigate(['/pollutions']);
       },

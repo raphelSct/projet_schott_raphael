@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, provideRouter } from '@angular/router';
+import { Store, provideStore } from '@ngxs/store';
 import { NEVER, Observable, of, throwError } from 'rxjs';
+import { AddFavorite } from '../../core/states/favorites/favorites.actions';
+import { FavoritesState } from '../../core/states/favorites/favorites.state';
 import { Pollution } from '../../models/pollution';
 import { ConfirmService } from '../../services/confirm.service';
 import { PollutionService } from '../../services/pollution.service';
@@ -26,6 +29,7 @@ async function showDetail(service: Partial<Record<keyof PollutionService, unknow
     imports: [PollutionDetail],
     providers: [
       provideRouter([{ path: 'pollutions', children: [] }]),
+      provideStore([FavoritesState]),
       { provide: PollutionService, useValue: service },
       // The user confirms in the dialog
       { provide: ConfirmService, useValue: { ask: () => Promise.resolve(true) } },
@@ -73,6 +77,22 @@ describe('PollutionDetail', () => {
     expect(TestBed.inject(ToastService).toasts()).toEqual([
       expect.objectContaining({ kind: 'success', message: '« Décharge sauvage » a été supprimée.' }),
     ]);
+  });
+
+  it('can pin the pollution, and removes it from the favorites once deleted', async () => {
+    const fixture = await showDetail({ getOne: () => of(pollution), delete: () => of(undefined) });
+    const store = TestBed.inject(Store);
+    const star = elementOf(fixture).querySelector<HTMLButtonElement>('.favorite')!;
+    expect(star.textContent).toContain('Ajouter aux favoris');
+
+    star.click();
+    await fixture.whenStable();
+    expect(store.selectSnapshot(FavoritesState.items)).toEqual([pollution]);
+    expect(star.textContent).toContain('Retirer des favoris');
+
+    elementOf(fixture).querySelector<HTMLButtonElement>('.delete')!.click();
+    await fixture.whenStable();
+    expect(store.selectSnapshot(FavoritesState.items)).toEqual([]);
   });
 
   it('stays on the page and shows an error toast when the deletion fails', async () => {

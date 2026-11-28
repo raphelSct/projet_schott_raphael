@@ -52,39 +52,16 @@
   <ul class="grid">
     @for (pollution of filteredPollutions(); track pollution.id) {
       <li class="pollution">
-        @if (pollution.photoUrl) {
-          <img class="thumbnail" [src]="pollution.photoUrl" alt="" />
-        } @else {
-          <div class="thumbnail no-photo">Pas de photo</div>
-        }
-
-        <div class="content">
-          <div class="tags">
-            <span class="badge">{{ pollution.type | pollutionTypeLabel }}</span>
-            <span
-              class="level"
-              [appHighlightPollution]="pollution.severityIndex"
-              [attr.title]="'Indice de dangerosité : ' + pollution.severityIndex"
-            >
-              Niveau : {{ pollution.severityIndex | pollutionLevel }}
-            </span>
-          </div>
-          <h2>
-            <a [routerLink]="['/pollutions', pollution.id]">{{ pollution.title }}</a>
-          </h2>
-          <p class="meta">{{ pollution.observationDate | date: 'longDate' }} · {{ pollution.location }}</p>
-        </div>
-
-        <div class="card-actions">
-          <a [routerLink]="['/pollutions', pollution.id]">Voir le détail</a>
+        <app-pollution-card [pollution]="pollution">
           <button
             type="button"
+            class="delete"
             [attr.aria-label]="'Supprimer « ' + pollution.title + ' »'"
             (click)="remove(pollution)"
           >
             Supprimer
           </button>
-        </div>
+        </app-pollution-card>
       </li>
     } @empty {
       <li class="state-message">

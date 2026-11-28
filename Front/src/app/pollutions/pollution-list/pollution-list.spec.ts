@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { Store, provideStore } from '@ngxs/store';
 import { Observable, of, throwError } from 'rxjs';
+import { AddFavorite } from '../../core/states/favorites/favorites.actions';
+import { FavoritesState } from '../../core/states/favorites/favorites.state';
 import { Pollution } from '../../models/pollution';
 import { ConfirmService } from '../../services/confirm.service';
 import { PollutionService } from '../../services/pollution.service';
@@ -52,6 +55,7 @@ async function showList(
     imports: [PollutionList],
     providers: [
       provideRouter([]),
+      provideStore([FavoritesState]),
       { provide: PollutionService, useValue: service },
       { provide: ConfirmService, useValue: { ask: () => Promise.resolve(confirmed) } },
     ],
@@ -88,6 +92,18 @@ describe('PollutionList', () => {
       'var(--level-low)',
     ]);
     expect(levels[0].title).toBe('Indice de dangerosité : 72');
+  });
+
+  it('lets each pollution be pinned with its star', async () => {
+    const fixture = await showList({ getAll: () => of(pollutions) });
+    const stars = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('.pollution .favorite')];
+    expect(stars).toHaveLength(3);
+
+    stars[1].click();
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Store).selectSnapshot(FavoritesState.items)).toEqual([pollutions[1]]);
+    expect(stars.map((star) => star.querySelector('.star')!.textContent!.trim())).toEqual(['☆', '★', '☆']);
   });
 
   it('shows a message when the API fails', async () => {
@@ -156,7 +172,7 @@ describe('PollutionList', () => {
   describe('deletion', () => {
     // Clicks "Supprimer" on the first card, then waits for the dialog's answer and the rendering
     async function deleteFirst(fixture: ComponentFixture<PollutionList>): Promise<void> {
-      (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.card-actions button')!.click();
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.card-actions .delete')!.click();
       await fixture.whenStable();
     }
 
@@ -171,6 +187,16 @@ describe('PollutionList', () => {
       expect(TestBed.inject(ToastService).toasts()).toEqual([
         expect.objectContaining({ kind: 'success', message: '« Décharge sauvage » a été supprimée.' }),
       ]);
+    });
+
+    it('removes the deleted pollution from the favorites', async () => {
+      const fixture = await showList({ getAll: () => of(pollutions), delete: () => of(undefined) });
+      const store = TestBed.inject(Store);
+      store.dispatch([new AddFavorite(pollutions[0]), new AddFavorite(pollutions[1])]);
+
+      await deleteFirst(fixture);
+
+      expect(store.selectSnapshot(FavoritesState.items)).toEqual([pollutions[1]]);
     });
 
     it('does nothing when the user cancels in the dialog', async () => {

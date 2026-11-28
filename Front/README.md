@@ -35,6 +35,7 @@ Les services encapsulent les appels HTTP :
 
 - `/login`, `/signup` : connexion et inscription ;
 - `/pollutions` : liste filtrable, `/pollutions/new` : déclaration, `/pollutions/:id` : détail, `/pollutions/:id/edit` : modification ;
+- `/favorites` (ou `/favoris`) : « Mes Favoris » ;
 - `/users` : utilisateurs inscrits, avec suppression (sauf son propre compte).
 
 ## Authentification : store NGXS
@@ -54,13 +55,29 @@ Le plugin de stockage enregistre le state dans le `localStorage` (clé `auth`) e
 
 C'est une authentification **simulée** : `id` et `role` sont fictifs, il n'y a pas de jeton, et le contenu du `localStorage` peut être modifié à la main. Les guards guident la navigation mais ne protègent pas les données ; ce sera le rôle du jeton (JWT) vérifié par l'API.
 
+## Favoris : second state NGXS
+
+Le dossier `src/app/core/states/favorites/` contient les actions et le state `favorites` (`items: Pollution[]`), lui aussi enregistré dans le `localStorage` (clé `favorites`) : les favoris survivent au rechargement et à la fermeture du navigateur.
+
+| Action | Effet |
+|---|---|
+| `AddFavorite(pollution)` | ajoute la pollution, sans jamais dupliquer un id |
+| `RemoveFavorite(pollutionId)` | retire la pollution (aussi déclenchée quand on supprime une pollution) |
+| `ToggleFavorite(pollution)` | ajoute ou retire : c'est l'étoile ☆ / ★ des cartes et de la page de détail |
+| `ClearFavorites` | vide la liste (bouton « Vider tous mes favoris », avec confirmation) |
+| `SyncFavorites(pollutions)` | remplace les copies par les valeurs actuelles de l'API et retire les pollutions disparues ; déclenchée à l'ouverture de « Mes Favoris » |
+
+Sélecteurs : `items`, `countFavorites` (badge de l'en-tête) et `isFavorite` (étoile). Le state n'est jamais modifié sur place : chaque action produit un nouveau tableau.
+
+Les favoris sont ceux du **navigateur**, pas du compte : le modèle ne mémorise pas à qui ils appartiennent, et ils restent après une déconnexion.
+
 ## Navigation : guards et chargement à la demande
 
 Chaque page est chargée à la demande (`loadComponent` et `loadChildren` dans `src/app/app.routes.ts` et `src/app/pollutions/pollutions.routes.ts`) : son code n'est téléchargé qu'à la première visite. Le bundle initial est passé d'environ 396 ko à 302 ko.
 
 | Guard (`src/app/guards/`) | Type | Rôle |
 |---|---|---|
-| `authGuard` | `canMatch` | réserve `/pollutions` et `/users` aux utilisateurs connectés (lus dans le store). Un visiteur est envoyé sur `/login?returnUrl=…` : la page demandée est mémorisée et la connexion y ramène. `canMatch` plutôt que `canActivate`, pour que le code de la page ne soit même pas téléchargé |
+| `authGuard` | `canMatch` | réserve `/pollutions`, `/favorites` et `/users` aux utilisateurs connectés (lus dans le store). Un visiteur est envoyé sur `/login?returnUrl=…` : la page demandée est mémorisée et la connexion y ramène. `canMatch` plutôt que `canActivate`, pour que le code de la page ne soit même pas téléchargé |
 | `guestGuard` | `canMatch` | renvoie sur `/pollutions` un utilisateur déjà connecté qui arrive sur `/login` ou `/signup` (bouton Précédent du navigateur, par exemple) |
 | `unsavedChangesGuard` | `canDeactivate` | demande confirmation (fenêtre de confirmation de l'application) avant de quitter `/pollutions/new` ou `/pollutions/:id/edit` avec des modifications non enregistrées. Rien n'est demandé après un enregistrement réussi ni après une déconnexion |
 

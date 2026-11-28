@@ -72,9 +72,19 @@ describe('ConfirmDialog', () => {
     const { answer } = await ask();
 
     // On Escape, the browser closes the dialog and sends "close", but not always "cancel"
+    dialog.open = false;
     dialog.dispatchEvent(new Event('close'));
 
     await expect(answer).resolves.toBe(false);
+  });
+
+  it('ignores the late "close" event of a previous question once the dialog is open again', async () => {
+    await ask();
+    expect(dialog.open).toBe(true);
+
+    dialog.dispatchEvent(new Event('close'));
+
+    expect(service.request()).not.toBeNull();
   });
 
   it('answers "no" on a click on the backdrop, but not on a click in the content', async () => {

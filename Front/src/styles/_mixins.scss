@@ -145,6 +145,43 @@
   color: var(--error);
 }
 
+// Page wider than the others: it displays a grid of cards
+@mixin wide-page {
+  display: block;
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+// Title of a wide page, with its main action on the right
+@mixin page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0;
+    color: var(--space-indigo);
+  }
+}
+
+// Responsive grid of cards (a list), each cell stretching its card
+@mixin card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: grid;
+  }
+}
+
 // "← Back" link at the top of a page
 @mixin back-link {
   display: inline-block;
