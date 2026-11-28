@@ -15,6 +15,23 @@
   padding: 0 1rem;
 }
 
+// Name of the logged-in user, next to the profile button
+.session {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .username {
+    color: var(--white);
+    font-weight: 600;
+
+    // Not enough room on a phone: the name is still in the profile panel
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+}
+
 .nav {
   display: flex;
   flex-wrap: wrap;

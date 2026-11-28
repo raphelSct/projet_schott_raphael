@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
+import { Store, provideStore } from '@ngxs/store';
 import { Observable, of, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
+import { AuthState } from '../store/auth.state';
 import { Login } from './login';
 import { LoginForm } from './login-form/login-form';
 
@@ -16,6 +18,7 @@ async function submit(response: Observable<User>, returnUrl?: string): Promise<H
     providers: [
       provideRouter([{ path: 'pollutions', children: [{ path: ':id', children: [] }] }]),
       { provide: UserService, useValue: { login: () => response } },
+      provideStore([AuthState]),
     ],
   });
   const fixture = TestBed.createComponent(Login);
@@ -38,6 +41,14 @@ describe('Login', () => {
     expect(TestBed.inject(Router).url).toBe('/pollutions');
   });
 
+  it('dispatches Login with the profile of the user checked by the API', async () => {
+    await submit(of(alice));
+    const store = TestBed.inject(Store);
+
+    expect(store.selectSnapshot(AuthState.isAuthenticated)).toBe(true);
+    expect(store.selectSnapshot(AuthState.user)).toEqual({ id: 1, email: alice.email, name: 'Alice Dupont', role: 'user' });
+  });
+
   it('goes back to the page the visitor asked for, when there is one', async () => {
     await submit(of(alice), '/pollutions/42');
 
@@ -48,6 +59,7 @@ describe('Login', () => {
     const element = await submit(throwError(() => new Error('Login ou mot de passe incorrect.')));
 
     expect(TestBed.inject(Router).url).toBe('/');
+    expect(TestBed.inject(Store).selectSnapshot(AuthState.isAuthenticated)).toBe(false);
     expect(element.querySelector('app-login-form')).toBeTruthy();
     expect(element.querySelector('.api-error')?.textContent).toContain('Login ou mot de passe incorrect.');
   });

@@ -1,10 +1,12 @@
-import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Store, provideStore } from '@ngxs/store';
 import { Observable, of, throwError } from 'rxjs';
 import { User } from '../../models/user';
 import { ConfirmService } from '../../services/confirm.service';
 import { ToastService } from '../../services/toast.service';
 import { UserService } from '../../services/user.service';
+import { Login } from '../../store/auth.actions';
+import { AuthState } from '../../store/auth.state';
 import { UserList } from './user-list';
 
 const alice: User = { id: '1', username: 'adupont', lastName: 'Dupont', firstName: 'Alice', email: 'alice.dupont@example.com' };
@@ -15,11 +17,13 @@ async function showList(service: { getAll: () => Observable<User[]>; delete?: (i
   TestBed.configureTestingModule({
     imports: [UserList],
     providers: [
-      { provide: UserService, useValue: { user: signal(alice), ...service } },
+      { provide: UserService, useValue: service },
+      provideStore([AuthState]),
       // The user confirms in the dialog
       { provide: ConfirmService, useValue: { ask: () => Promise.resolve(true) } },
     ],
   });
+  TestBed.inject(Store).dispatch(new Login({ email: alice.email, name: 'Alice Dupont' }));
   const fixture = TestBed.createComponent(UserList);
   await fixture.whenStable();
   return fixture;

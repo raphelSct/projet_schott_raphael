@@ -1,21 +1,17 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
-import { Observable, catchError, tap, throwError } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Credentials, NewUser, User } from '../models/user';
 
+// Calls to the users API. Who is logged in is kept by the NGXS store (AuthState), not here
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/users`;
 
-  // User logged in during this visit. No session yet: it is lost when the page reloads
-  private readonly currentUser = signal<User | null>(null);
-  readonly user = this.currentUser.asReadonly();
-
   signUp(newUser: NewUser): Observable<User> {
     return this.http.post<User>(this.url, newUser).pipe(
-      tap((user) => this.currentUser.set(user)),
       catchError((error: HttpErrorResponse) =>
         throwError(() => new Error(errorMessage(error, "L'inscription a échoué", { 409: 'Ce login ou cet email est déjà utilisé.' }))),
       ),
@@ -25,15 +21,10 @@ export class UserService {
   // Fictitious authentication: the API checks the password, but there is no session or token
   login(credentials: Credentials): Observable<User> {
     return this.http.post<User>(`${this.url}/login`, credentials).pipe(
-      tap((user) => this.currentUser.set(user)),
       catchError((error: HttpErrorResponse) =>
         throwError(() => new Error(errorMessage(error, 'La connexion a échoué', { 401: 'Login ou mot de passe incorrect.' }))),
       ),
     );
-  }
-
-  logout(): void {
-    this.currentUser.set(null);
   }
 
   getAll(): Observable<User[]> {

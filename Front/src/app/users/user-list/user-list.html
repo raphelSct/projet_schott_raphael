@@ -9,7 +9,8 @@
 
   <ul class="users">
     @for (user of users(); track user.id) {
-      @let isMe = user.id === currentUser()?.id;
+      <!-- Compared by email, which is unique: the id kept in the store is simulated -->
+      @let isMe = user.email === currentUser()?.email;
       <li class="user">
         <span class="avatar" aria-hidden="true">{{ initials(user) }}</span>
 

@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { finalize, switchMap } from 'rxjs';
 import { NewUser } from '../models/user';
 import { ToastService } from '../services/toast.service';
 import { UserService } from '../services/user.service';
+import { Login } from '../store/auth.actions';
 import { SignupForm } from './signup-form/signup-form';
 
 @Component({
@@ -15,6 +17,7 @@ import { SignupForm } from './signup-form/signup-form';
 })
 export class Signup {
   private readonly userService = inject(UserService);
+  private readonly store = inject(Store);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
@@ -29,13 +32,17 @@ export class Signup {
 
     this.userService
       .signUp(newUser)
-      .pipe(finalize(() => this.submitting.set(false)))
-      .subscribe({
-        // The service keeps the signed-up user: the rest of the application is now available
-        next: (user) => {
+      .pipe(
+        // A new account is logged in right away
+        switchMap((user) => {
           this.toastService.success(`Bienvenue ${user.firstName}, votre compte a été créé.`);
-          this.router.navigate(['/pollutions']);
-        },
+          return this.store.dispatch(new Login({ email: user.email, name: `${user.firstName} ${user.lastName}` }));
+        }),
+        finalize(() => this.submitting.set(false)),
+      )
+      .subscribe({
+        // The rest of the application is now available
+        next: () => this.router.navigate(['/pollutions']),
         error: (error: Error) => this.error.set(error.message),
       });
   }

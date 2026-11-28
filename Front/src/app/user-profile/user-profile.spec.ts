@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { User } from '../models/user';
+import { UserProfile as StoredUser } from '../models/auth';
 import { UserProfile } from './user-profile';
 
-const alice: User = { id: '1', username: 'adupont', lastName: 'Dupont', firstName: 'Alice', email: 'alice.dupont@example.com' };
+const alice: StoredUser = { id: 1, email: 'alice.dupont@example.com', name: 'Alice Dupont', role: 'user' };
 
 describe('UserProfile', () => {
   let fixture: ComponentFixture<UserProfile>;
@@ -32,6 +32,13 @@ describe('UserProfile', () => {
 
     expect(avatar.getAttribute('aria-expanded')).toBe('true');
     expect(element.querySelector('.panel')?.textContent).toContain('alice.dupont@example.com');
+  });
+
+  it('takes the initials from the first and the last word of the name', async () => {
+    fixture.componentRef.setInput('user', { ...alice, name: 'Jean Claude Van Damme' });
+    await fixture.whenStable();
+
+    expect(element.querySelector('.avatar')?.textContent?.trim()).toBe('JD');
   });
 
   it('asks the parent to log out', async () => {
