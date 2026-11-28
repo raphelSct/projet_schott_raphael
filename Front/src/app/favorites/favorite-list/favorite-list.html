@@ -1,0 +1,19 @@
+<div class="page-header">
+  <h1>Mes Favoris</h1>
+  @if (favorites().length) {
+    <button type="button" class="clear" (click)="clear()">Vider tous mes favoris</button>
+  }
+</div>
+
+<ul class="grid">
+  @for (pollution of favorites(); track pollution.id) {
+    <li class="pollution">
+      <app-pollution-card [pollution]="pollution" />
+    </li>
+  } @empty {
+    <li class="state-message">
+      <p>Aucun favori enregistré</p>
+      <p>Ajoutez-en avec l'étoile ☆ depuis <a routerLink="/pollutions">la liste des pollutions</a>.</p>
+    </li>
+  }
+</ul>

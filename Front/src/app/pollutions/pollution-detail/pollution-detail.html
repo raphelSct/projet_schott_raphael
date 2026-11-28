@@ -4,6 +4,7 @@
   <app-pollution-info [pollution]="detail" />
 
   <div class="actions">
+    <app-favorite-button class="favorite-action" [pollution]="detail" [showLabel]="true" />
     <button type="button" class="delete" (click)="remove(detail)">Supprimer</button>
     <a class="edit" [routerLink]="['/pollutions', detail.id, 'edit']">Modifier</a>
   </div>

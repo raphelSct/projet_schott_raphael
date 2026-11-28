@@ -1,0 +1,34 @@
+@use '../../../styles/mixins';
+
+:host {
+  @include mixins.wide-page;
+}
+
+.page-header {
+  @include mixins.page-header;
+
+  .clear {
+    @include mixins.button-danger;
+  }
+}
+
+.grid {
+  @include mixins.card-grid;
+}
+
+.state-message {
+  grid-column: 1 / -1;
+  padding: 2rem 1rem;
+  color: var(--dusty-grape);
+  text-align: center;
+
+  p:first-child {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  a {
+    color: var(--space-indigo);
+    font-weight: 600;
+  }
+}

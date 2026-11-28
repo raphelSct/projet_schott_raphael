@@ -36,8 +36,10 @@ export class ConfirmDialog {
   // Escape is handled in the template (keydown.escape): browsers do not always close a modal dialog on Escape
   // (anti-abuse rules), nor send "cancel" when they do. "close" is always sent, whatever closed the dialog:
   // if the question is still unanswered at that point, it means "no".
+  // "close" is delivered a moment after the closing, though: if the dialog is open again by then, the event
+  // belongs to the previous question and must not answer the new one.
   cancelIfStillAsked(): void {
-    if (this.confirmService.request()) {
+    if (!this.dialog().nativeElement.open && this.confirmService.request()) {
       this.confirmService.answer(false);
     }
   }

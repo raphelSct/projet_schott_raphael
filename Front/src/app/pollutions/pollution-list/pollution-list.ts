@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { finalize, map } from 'rxjs';
-import { HighlightPollutionDirective } from '../../directives/highlight-pollution.directive';
+import { RemoveFavorite } from '../../core/states/favorites/favorites.actions';
 import { POLLUTION_TYPES, POLLUTION_TYPE_LABELS, Pollution } from '../../models/pollution';
-import { PollutionLevelPipe } from '../../pipes/pollution-level.pipe';
 import { PollutionTypeLabelPipe } from '../../pipes/pollution-type-label.pipe';
 import { ConfirmService } from '../../services/confirm.service';
 import { PollutionService } from '../../services/pollution.service';
 import { ToastService } from '../../services/toast.service';
+import { PollutionCard } from '../pollution-card/pollution-card';
 
 // Lowercase, without accents: "Dépôt" and "depot" must match
 function normalizeText(text: string): string {
@@ -19,7 +19,7 @@ function normalizeText(text: string): string {
 
 @Component({
   selector: 'app-pollution-list',
-  imports: [DatePipe, HighlightPollutionDirective, PollutionLevelPipe, PollutionTypeLabelPipe, ReactiveFormsModule, RouterLink],
+  imports: [PollutionCard, PollutionTypeLabelPipe, ReactiveFormsModule, RouterLink],
   templateUrl: './pollution-list.html',
   styleUrl: './pollution-list.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +28,7 @@ export class PollutionList implements OnInit {
   private readonly pollutionService = inject(PollutionService);
   private readonly confirmService = inject(ConfirmService);
   private readonly toastService = inject(ToastService);
+  private readonly store = inject(Store);
 
   readonly pollutionTypes = POLLUTION_TYPES;
 
@@ -90,6 +91,8 @@ export class PollutionList implements OnInit {
     this.pollutionService.delete(pollution.id).subscribe({
       next:()=>{
         this.pollutions.update((liste)=>liste.filter((p) => p.id !== pollution.id));
+        // A deleted pollution cannot stay a favorite
+        this.store.dispatch(new RemoveFavorite(pollution.id));
         this.toastService.success(`« ${pollution.title} » a été supprimée.`);
       },
       error:()=>{
